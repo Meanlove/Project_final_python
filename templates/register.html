@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #0a0a1f;
+        overflow: hidden;
+        font-family: sans-serif;
+      }
+
+      /* Canvas covers whole screen for animated stars */
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      
+/* Glass login/register box */
+.login-box {
+  width: 360px;
+  background: rgba(0, 0, 40, 0.85);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(111, 168, 220, 0.8);
+  color: white;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+}
+
+/* Header */
+.login-box h3 {
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+  color: #6fa8dc;
+  text-shadow: 0 0 10px rgba(111,168,220,0.7);
+}
+
+/* Input fields */
+.login-box input,
+.login-box select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 5px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 10px rgba(111,168,220,0.4);
+  appearance: none;
+}
+
+.login-box input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.login-box input:focus,
+.login-box select:focus {
+  outline: none;
+  border-color: #6fa8dc;
+  box-shadow: 0 0 20px rgba(111,168,220,0.8);
+}
+
+/* Role dropdown custom style */
+.role-select {
+  position: relative;
+}
+
+.role-select::after {
+  content: '▼';
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  color: #6fa8dc;
+  pointer-events: none;
+  font-size: 12px;
+}
+
+/* Hover effect */
+.login-box input:hover,
+.login-box select:hover {
+  border-color: #3a6ea5;
+  box-shadow: 0 0 15px rgba(58, 110, 165, 0.7);
+}
+
+/* Button */
+.login-box .btn-primary {
+  margin-top: 15px;
+  background: linear-gradient(90deg, #6fa8dc, #3a6ea5);
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(111,168,220,0.7);
+}
+
+.login-box .btn-primary:hover {
+  background: linear-gradient(90deg, #3a6ea5, #6fa8dc);
+  box-shadow: 0 0 25px rgba(111,168,220,1);
+}
+
+/* Footer link */
+.login-box .text-center a {
+  color: #6fa8dc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-box .text-center a:hover {
+  text-shadow: 0 0 8px rgba(111,168,220,0.8);
+}
+
+.role-select select {
+  color: white;                  /* text color */
+  background: #0a0a1f;           /* dark background */
+}
+
+    </style>
+  </head>
+  <body>
+    <canvas id="galaxy"></canvas>
+
+    <div class="login-box">
+      <h3 class="text-center mb-4">Register</h3>
+      <form method="POST" action="/">
+
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input type="text" name="username" placeholder="Enter username" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" placeholder="Enter email" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" name="password" placeholder="Enter password" required />
+    </div>
+
+    <div class="mb-3 role-select">
+      <label class="form-label">Role</label>
+      <select name="role" required>
+        <option value="Customer">Customer</option>
+        <option value="Admin">Admin</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary w-100">Register</button>
+  </form>
+
+      <div class="text-center mt-3">
+        <p class="mb-0">
+          Already have an account?
+          <a href="/">Login</a>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('galaxy');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      let particles = [];
+      const numStars = 150;
+      const numParticles = 30;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Create stars
+      for (let i = 0; i < numStars; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 2 + 1,
+          speed: Math.random() * 0.3 + 0.1,
+          alpha: Math.random()
+        });
+      }
+
+      // Create glowing particles (React Bits style)
+      for (let i = 0; i < numParticles; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 4 + 2,
+          speed: Math.random() * 0.5 + 0.2,
+          color: `hsl(${Math.random() * 360}, 70%, 70%)`
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw stars
+        stars.forEach(s => {
+          ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+          ctx.fill();
+          s.x -= s.speed;
+          s.alpha += (Math.random() - 0.5) * 0.02;
+          if (s.alpha < 0.1) s.alpha = 0.1;
+          if (s.alpha > 1) s.alpha = 1;
+          if (s.x < 0) s.x = canvas.width;
+        });
+
+        // Draw particles
+        particles.forEach(p => {
+          ctx.fillStyle = p.color;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          p.y -= p.speed;
+          if (p.y < 0) p.y = canvas.height;
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>

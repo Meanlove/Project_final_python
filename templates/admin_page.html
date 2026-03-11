@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEXUS Admin — Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#060a10;
+  --bg2:#0b1018;
+  --bg3:#0f1520;
+  --card:#0d1622;
+  --border:#1a2535;
+  --border2:#243044;
+  --cyan:#00d4ff;
+  --cyan-dim:rgba(0,212,255,.1);
+  --orange:#ff6b2b;
+  --green:#00e87a;
+  --red:#ff3b5c;
+  --yellow:#ffc107;
+  --text:#ddeeff;
+  --muted:#3d5570;
+  --muted2:#28394d;
+  --sidebar-w:240px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;transition:transform .3s;}
+.sidebar-brand{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border);}
+.brand-name{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:.15em;color:var(--text);}
+.brand-name span{color:var(--cyan);}
+.brand-role{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-top:.15rem;}
+.nav-section-label{font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);padding:.9rem 1.5rem .4rem;margin-top:.5rem;}
+.nav-item-s{display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;cursor:pointer;transition:all .2s;border-left:2px solid transparent;text-decoration:none;color:var(--muted);}
+.nav-item-s:hover{background:rgba(0,212,255,.05);color:var(--text);}
+.nav-item-s.active{background:rgba(0,212,255,.08);color:var(--cyan);border-left-color:var(--cyan);}
+.nav-item-s i{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-item-s span{font-size:.75rem;letter-spacing:.04em;}
+.nav-badge{background:var(--orange);color:#fff;font-size:.5rem;padding:.15rem .45rem;border-radius:8px;font-family:'IBM Plex Mono',monospace;margin-left:auto;}
+.sidebar-bottom{margin-top:auto;padding:1rem 1.5rem;border-top:1px solid var(--border);}
+.admin-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--cyan2,#0099cc));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--bg);flex-shrink:0;}
+.admin-name{font-size:.8rem;font-weight:500;color:var(--text);}
+.admin-email{font-family:'IBM Plex Mono',monospace;font-size:.55rem;color:var(--muted);}
+
+/* MAIN */
+.main-wrap{margin-left:var(--sidebar-w);min-height:100vh;background:var(--bg);}
+
+/* TOPBAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.page-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);}
+.page-breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--muted);margin-top:.1rem;}
+.topbar-actions{display:flex;align-items:center;gap:1rem;}
+.topbar-btn{background:transparent;border:1px solid var(--border);color:var(--muted);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;position:relative;transition:all .2s;}
+.topbar-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.topbar-notif{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;font-size:.45rem;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+/* CONTENT */
+.content{padding:2rem;}
+
+/* VIEWS */
+.view{display:none;}
+.view.active{display:block;}
+
+/* STAT CARDS */
+.stat-card{background:var(--card);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;transition:border-color .3s;}
+.stat-card:hover{border-color:var(--border2);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.cyan::before{background:var(--cyan);}
+.stat-card.orange::before{background:var(--orange);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.red::before{background:var(--red);}
+.stat-icon{font-size:1.5rem;margin-bottom:1rem;}
+.stat-card.cyan .stat-icon{color:var(--cyan);}
+.stat-card.orange .stat-icon{color:var(--orange);}
+.stat-card.green .stat-icon{color:var(--green);}
+.stat-card.red .stat-icon{color:var(--red);}
+.stat-val{font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;color:var(--text);}
+.stat-label{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:.3rem;}
+.stat-delta{font-family:'IBM Plex Mono',monospace;font-size:.6rem;margin-top:.5rem;}
+.stat-delta.up{color:var(--green);}
+.stat-delta.down{color:var(--red);}
+
+/* CHARTS */
+.chart-card{background:var(--card);border:1px solid var(--border);padding:1.5rem;}
+.chart-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);margin-bottom:.35rem;}
+.chart-sub{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;color:var(--muted);margin-bottom:1.2rem;}
+.chart-container{position:relative;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:.8rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+.data-table td{padding:.85rem 1rem;border-bottom:1px solid var(--border);font-size:.8rem;color:var(--text);vertical-align:middle;}
+.data-table tr:hover td{background:rgba(0,212,255,.025);}
+.status-badge{font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .7rem;display:inline-block;}
+.status-active{background:rgba(0,232,122,.12);color:var(--green);border:1px solid rgba(0,232,122,.2);}
+.status-low{background:rgba(255,107,43,.12);color:var(--orange);border:1px solid rgba(255,107,43,.2);}
+.status-out{background:rgba(255,59,92,.12);color:var(--red);border:1px solid rgba(255,59,92,.2);}
+.status-pending{background:rgba(255,193,7,.12);color:var(--yellow);border:1px solid rgba(255,193,7,.2);}
+.tbl-action{background:transparent;border:1px solid var(--border);color:var(--muted);font-size:.75rem;padding:.3rem .65rem;cursor:pointer;transition:all .2s;font-family:'IBM Plex Mono',monospace;}
+.tbl-action:hover{border-color:var(--cyan);color:var(--cyan);}
+.tbl-action.danger:hover{border-color:var(--red);color:var(--red);}
+
+/* PRODUCT FORM */
+.form-card{background:var(--card);border:1px solid var(--border);padding:2rem;}
+.form-label-n{font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;display:block;}
+.form-control-n{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:.85rem;padding:.7rem 1rem;width:100%;outline:none;transition:border-color .2s;}
+.form-control-n:focus{border-color:var(--cyan);}
+.form-control-n::placeholder{color:var(--muted);}
+select.form-control-n option{background:var(--bg3);}
+.img-upload-area{background:var(--bg3);border:1px dashed var(--border2);padding:2.5rem;text-align:center;cursor:pointer;transition:border-color .2s;}
+.img-upload-area:hover{border-color:var(--cyan);}
+.img-upload-icon{font-size:2rem;color:var(--muted);margin-bottom:.75rem;}
+.img-upload-text{font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--muted);}
+.btn-admin-primary{background:var(--cyan);color:var(--bg);border:none;font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:.8rem 1.8rem;cursor:pointer;transition:all .25s;}
+.btn-admin-primary:hover{background:#00b8e0;transform:translateY(-1px);}
+.btn-admin-outline{background:transparent;color:var(--muted);border:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;padding:.8rem 1.5rem;cursor:pointer;transition:all .2s;}
+.btn-admin-outline:hover{border-color:var(--muted2);color:var(--text);}
+.btn-admin-danger{background:transparent;color:var(--red);border:1px solid rgba(255,59,92,.3);font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.15em;padding:.8rem 1.5rem;cursor:pointer;transition:all .2s;}
+.btn-admin-danger:hover{background:rgba(255,59,92,.1);}
+
+/* PRODUCT GRID ADMIN */
+.admin-prod-card{background:var(--card);border:1px solid var(--border);transition:border-color .3s;}
+.admin-prod-card:hover{border-color:var(--border2);}
+.admin-prod-img{width:100%;aspect-ratio:1;object-fit:cover;filter:brightness(.85);}
+.admin-prod-info{padding:1rem;}
+.admin-prod-name{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.35rem;}
+.admin-prod-price{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--cyan);}
+.admin-prod-stock{font-family:'IBM Plex Mono',monospace;font-size:.6rem;margin-top:.4rem;}
+.admin-prod-actions{display:flex;gap:.4rem;padding:.75rem 1rem;border-top:1px solid var(--border);}
+
+/* MODAL */
+.modal-n{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.modal-n.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);padding:2rem;width:90%;max-width:500px;transform:translateY(20px);transition:transform .3s;}
+.modal-n.open .modal-box{transform:translateY(0);}
+.modal-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:1.5rem;}
+
+/* TOAST */
+.toast-admin{position:fixed;bottom:2rem;right:2rem;background:var(--bg2);border:1px solid var(--cyan);border-left:3px solid var(--cyan);color:var(--text);padding:.9rem 1.5rem;font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.1em;z-index:9999;opacity:0;transform:translateY(16px);transition:all .4s;pointer-events:none;max-width:320px;}
+.toast-admin.show{opacity:1;transform:translateY(0);}
+.toast-admin.error{border-color:var(--red);}
+
+/* Search in topbar */
+.topbar-search{background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.7rem;padding:.5rem 1rem;outline:none;width:200px;transition:border-color .2s;}
+.topbar-search:focus{border-color:var(--cyan);}
+.topbar-search::placeholder{color:var(--muted);}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-wrap{margin-left:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-name">NEX<span>US</span></div>
+    <div class="brand-role">Admin Control Panel</div>
+  </div>
+
+  <div class="nav-section-label">Main</div>
+  <a class="nav-item-s active" onclick="showView('dashboard',this)">
+    <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+  </a>
+  <a class="nav-item-s" onclick="showView('products',this)">
+    <i class="bi bi-box-seam"></i><span>Products</span><span class="nav-badge">48</span>
+  </a>
+  <a class="nav-item-s" onclick="showView('add-product',this)">
+    <i class="bi bi-plus-square"></i><span>Add Product</span>
+  </a>
+
+  <div class="nav-section-label">Analytics</div>
+  <a class="nav-item-s" onclick="showView('analytics',this)">
+    <i class="bi bi-bar-chart-line"></i><span>Analytics</span>
+  </a>
+  <a class="nav-item-s" onclick="showView('orders',this)">
+    <i class="bi bi-receipt"></i><span>Orders</span><span class="nav-badge" style="background:var(--yellow);color:#000;">12</span>
+  </a>
+
+  <div class="nav-section-label">System</div>
+  <a class="nav-item-s" onclick="adminToast('⚙️ Settings panel coming soon')">
+    <i class="bi bi-gear"></i><span>Settings</span>
+  </a>
+  <a href="/logout" class="nav-item-s" onclick="adminToast('🔐 Logging out...',false)">
+    <i class="bi bi-box-arrow-left"></i><span>Logout</span>
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <div class="admin-avatar">A</div>
+      <div>
+        <div class="admin-name">Admin User</div>
+        <div class="admin-email">admin@nexus.io</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-breadcrumb" id="page-breadcrumb">NEXUS / ADMIN / DASHBOARD</div>
+    </div>
+    <div class="topbar-actions">
+      <input class="topbar-search d-none d-md-block" type="text" placeholder="Search products..."/>
+      <button class="topbar-btn" onclick="adminToast('🔔 No new notifications')"><i class="bi bi-bell"></i><span class="topbar-notif">3</span></button>
+      <button class="topbar-btn" onclick="adminToast('📧 0 new messages')"><i class="bi bi-envelope"></i></button>
+      <div class="admin-avatar" style="cursor:pointer;width:32px;height:32px;font-size:.8rem;" onclick="adminToast('👤 Admin profile')">A</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== DASHBOARD VIEW ===== -->
+    <div class="view active" id="view-dashboard">
+      <!-- Stat Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><div class="stat-card cyan"><div class="stat-icon"><i class="bi bi-currency-dollar"></i></div><div class="stat-val">$84,291</div><div class="stat-label">Total Revenue</div><div class="stat-delta up">↑ 12.4% vs last month</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card orange"><div class="stat-icon"><i class="bi bi-receipt"></i></div><div class="stat-val">1,482</div><div class="stat-label">Total Orders</div><div class="stat-delta up">↑ 8.1% vs last month</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card green"><div class="stat-icon"><i class="bi bi-people"></i></div><div class="stat-val">9,340</div><div class="stat-label">Customers</div><div class="stat-delta up">↑ 5.6% vs last month</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card red"><div class="stat-icon"><i class="bi bi-box-seam"></i></div><div class="stat-val">48</div><div class="stat-label">Active Products</div><div class="stat-delta down">↓ 2 low stock</div></div></div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-lg-8">
+          <div class="chart-card">
+            <div class="chart-title">Revenue Overview</div>
+            <div class="chart-sub">MONTHLY REVENUE — 2026</div>
+            <div class="chart-container" style="height:240px;"><canvas id="revenueChart"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="chart-card h-100">
+            <div class="chart-title">Sales by Category</div>
+            <div class="chart-sub">CATEGORY BREAKDOWN</div>
+            <div class="chart-container" style="height:200px;"><canvas id="categoryChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders + Top Products -->
+      <div class="row g-3">
+        <div class="col-lg-8">
+          <div class="chart-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div><div class="chart-title">Recent Orders</div><div class="chart-sub">LATEST 5 TRANSACTIONS</div></div>
+              <button class="tbl-action" onclick="showView('orders',document.querySelector('[onclick*=orders]'))">View All</button>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">#NX-8821</td><td>Marcus T.</td><td>MacBook Pro M4</td><td style="font-family:'IBM Plex Mono',monospace;">$1,999</td><td><span class="status-badge status-active">Delivered</span></td></tr>
+                  <tr><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">#NX-8820</td><td>Aisha K.</td><td>AirPods Pro 3</td><td style="font-family:'IBM Plex Mono',monospace;">$279</td><td><span class="status-badge status-pending">Pending</span></td></tr>
+                  <tr><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">#NX-8819</td><td>Chen W.</td><td>Sony WH-1000XM6</td><td style="font-family:'IBM Plex Mono',monospace;">$299</td><td><span class="status-badge status-active">Delivered</span></td></tr>
+                  <tr><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">#NX-8818</td><td>Sara M.</td><td>Galaxy S25 Ultra</td><td style="font-family:'IBM Plex Mono',monospace;">$1,199</td><td><span class="status-badge status-low">Shipping</span></td></tr>
+                  <tr><td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">#NX-8817</td><td>James R.</td><td>Dell XPS 15</td><td style="font-family:'IBM Plex Mono',monospace;">$1,849</td><td><span class="status-badge status-pending">Processing</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="chart-card">
+            <div class="chart-title">Top Products</div>
+            <div class="chart-sub">BY REVENUE</div>
+            <div style="height:220px;"><canvas id="topProdChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRODUCTS VIEW ===== -->
+    <div class="view" id="view-products">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);">Product Inventory</h2>
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--muted);">8 PRODUCTS SHOWN</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <select class="form-control-n" style="width:auto;font-size:.75rem;" onchange="adminToast('Filter: '+this.value)">
+            <option>All Categories</option>
+            <option>Smartphones</option>
+            <option>Laptops</option>
+            <option>Audio</option>
+            <option>Wearables</option>
+          </select>
+          <button class="btn-admin-primary" onclick="showView('add-product',document.querySelector('[onclick*=add-product]'))"><i class="bi bi-plus me-1"></i>Add Product</button>
+        </div>
+      </div>
+
+      <!-- Product cards -->
+      <div class="row g-3" id="admin-prod-grid"></div>
+    </div>
+
+    <!-- ===== ADD PRODUCT VIEW ===== -->
+    <div class="view" id="view-add-product">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);" id="form-title">Add New Product</h2>
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--muted);">FILL IN ALL REQUIRED FIELDS</p>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="row g-4">
+          <div class="col-md-8">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="form-label-n">Product Name *</label>
+                <input class="form-control-n" type="text" id="f-name" placeholder="e.g. MacBook Pro M4 14-inch"/>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-n">Brand *</label>
+                <select class="form-control-n" id="f-brand">
+                  <option value="">Select Brand</option>
+                  <option>Apple</option><option>Samsung</option><option>Sony</option>
+                  <option>Dell</option><option>ASUS</option><option>Bose</option>
+                  <option>LG</option><option>Other</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-n">Category *</label>
+                <select class="form-control-n" id="f-category">
+                  <option value="">Select Category</option>
+                  <option>Smartphones</option><option>Laptops</option><option>Audio</option>
+                  <option>Wearables</option><option>Cameras</option><option>Gaming</option>
+                  <option>Accessories</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-n">Price (USD) *</label>
+                <input class="form-control-n" type="number" id="f-price" placeholder="0.00"/>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-n">Original Price</label>
+                <input class="form-control-n" type="number" id="f-oldprice" placeholder="Optional"/>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-n">Stock Quantity *</label>
+                <input class="form-control-n" type="number" id="f-stock" placeholder="0"/>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-n">Badge</label>
+                <select class="form-control-n" id="f-badge">
+                  <option value="">None</option>
+                  <option value="New">New</option>
+                  <option value="Sale">Sale</option>
+                  <option value="Hot">Hot</option>
+                  <option value="Exclusive">Exclusive</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-n">Status</label>
+                <select class="form-control-n" id="f-status">
+                  <option>Active</option>
+                  <option>Draft</option>
+                  <option>Out of Stock</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label-n">Description</label>
+                <textarea class="form-control-n" id="f-desc" rows="4" placeholder="Describe the product features, specs..."></textarea>
+              </div>
+              <div class="col-12">
+                <label class="form-label-n">Image URL</label>
+                <input class="form-control-n" type="text" id="f-img" placeholder="https://images.unsplash.com/..."/>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-n">Product Image</label>
+            <div class="img-upload-area" onclick="adminToast('📁 File picker coming soon')">
+              <div class="img-upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+              <div class="img-upload-text">CLICK TO UPLOAD<br>PNG, JPG up to 10MB</div>
+            </div>
+            <div id="img-preview" class="mt-2" style="display:none;">
+              <img id="preview-img" src="" alt="Preview" style="width:100%;aspect-ratio:1;object-fit:cover;border:1px solid var(--border);"/>
+            </div>
+
+            <!-- Live Preview Card -->
+            <div style="margin-top:1.5rem;">
+              <label class="form-label-n">Live Preview</label>
+              <div style="background:var(--bg3);border:1px solid var(--border);padding:1rem;">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:.35rem;" id="prev-brand">BRAND</div>
+                <div style="font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);margin-bottom:.35rem;" id="prev-name">Product Name</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:var(--cyan);" id="prev-price">$0.00</div>
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:.35rem;" id="prev-stock">Stock: 0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 d-flex gap-3 flex-wrap pt-2 border-top" style="border-color:var(--border) !important;">
+            <button class="btn-admin-primary" onclick="saveProduct()"><i class="bi bi-check2 me-1"></i>Save Product</button>
+            <button class="btn-admin-outline" onclick="clearForm()">Clear Form</button>
+            <button class="btn-admin-danger" id="delete-prod-btn" style="display:none;" onclick="deleteCurrentProduct()"><i class="bi bi-trash me-1"></i>Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ANALYTICS VIEW ===== -->
+    <div class="view" id="view-analytics">
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:.5rem;">Analytics</h2>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--muted);margin-bottom:2rem;">PERFORMANCE METRICS — 2026</p>
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><div class="stat-card cyan"><div class="stat-icon"><i class="bi bi-eye"></i></div><div class="stat-val">248K</div><div class="stat-label">Page Views</div><div class="stat-delta up">↑ 18.2%</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card orange"><div class="stat-icon"><i class="bi bi-cursor"></i></div><div class="stat-val">3.8%</div><div class="stat-label">Conversion Rate</div><div class="stat-delta up">↑ 0.4%</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card green"><div class="stat-icon"><i class="bi bi-basket"></i></div><div class="stat-val">$56.80</div><div class="stat-label">Avg Order Value</div><div class="stat-delta up">↑ 6.1%</div></div></div>
+        <div class="col-6 col-xl-3"><div class="stat-card red"><div class="stat-icon"><i class="bi bi-arrow-return-left"></i></div><div class="stat-val">1.2%</div><div class="stat-label">Return Rate</div><div class="stat-delta up">↓ 0.3%</div></div></div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-title">Weekly Traffic</div>
+            <div class="chart-sub">VISITORS PER DAY THIS WEEK</div>
+            <div style="height:220px;"><canvas id="trafficChart"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <div class="chart-title">Device Breakdown</div>
+            <div class="chart-sub">VISITORS BY DEVICE</div>
+            <div style="height:220px;"><canvas id="deviceChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ORDERS VIEW ===== -->
+    <div class="view" id="view-orders">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);">Orders</h2>
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--muted);">1,482 TOTAL ORDERS</p>
+        </div>
+        <button class="btn-admin-outline" onclick="adminToast('📥 Exporting CSV...')"><i class="bi bi-download me-1"></i>Export CSV</button>
+      </div>
+      <div class="chart-card" style="overflow-x:auto;">
+        <table class="data-table" style="min-width:680px;">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="orders-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-wrap -->
+
+<!-- EDIT MODAL -->
+<div class="modal-n" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title">Edit Product</div>
+    <div class="mb-3"><label class="form-label-n">Product Name</label><input class="form-control-n" id="edit-name" type="text"/></div>
+    <div class="row g-3 mb-3">
+      <div class="col-6"><label class="form-label-n">Price</label><input class="form-control-n" id="edit-price" type="number"/></div>
+      <div class="col-6"><label class="form-label-n">Stock</label><input class="form-control-n" id="edit-stock" type="number"/></div>
+    </div>
+    <div class="d-flex gap-2 justify-content-end">
+      <button class="btn-admin-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn-admin-primary" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-admin" id="admin-toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ── DATA ──
+let products = [
+  {id:1,brand:'Apple',name:'MacBook Pro M4 14"',price:1999,old:null,badge:'New',category:'Laptops',stock:24,status:'Active',img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70'},
+  {id:2,brand:'Samsung',name:'Galaxy S25 Ultra 512GB',price:1199,old:1399,badge:'Sale',category:'Smartphones',stock:38,status:'Active',img:'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=300&q=70'},
+  {id:3,brand:'Sony',name:'WH-1000XM6 Headphones',price:299,old:449,badge:'Hot',category:'Audio',stock:5,status:'Active',img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=70'},
+  {id:4,brand:'Apple',name:'Apple Watch Ultra 3',price:799,old:null,badge:'New',category:'Wearables',stock:19,status:'Active',img:'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=300&q=70'},
+  {id:5,brand:'ASUS',name:'ROG Strix G16 Gaming',price:1649,old:1999,badge:'Sale',category:'Laptops',stock:0,status:'Out of Stock',img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=300&q=70'},
+  {id:6,brand:'GoPro',name:'HERO13 Black Action Cam',price:399,old:null,badge:null,category:'Cameras',stock:42,status:'Active',img:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=300&q=70'},
+  {id:7,brand:'Bose',name:'QuietComfort Ultra Buds',price:279,old:329,badge:'Sale',category:'Audio',stock:7,status:'Active',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&q=70'},
+  {id:8,brand:'Dell',name:'XPS 15 OLED 2026',price:1849,old:null,badge:'New',category:'Laptops',stock:11,status:'Active',img:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&q=70'},
+];
+
+const orders=[
+  {id:'#NX-8821',customer:'Marcus T.',product:'MacBook Pro M4',date:'Mar 10, 2026',amount:'$1,999',status:'Delivered'},
+  {id:'#NX-8820',customer:'Aisha K.',product:'AirPods Pro 3',date:'Mar 10, 2026',amount:'$279',status:'Pending'},
+  {id:'#NX-8819',customer:'Chen W.',product:'Sony WH-1000XM6',date:'Mar 09, 2026',amount:'$299',status:'Delivered'},
+  {id:'#NX-8818',customer:'Sara M.',product:'Galaxy S25 Ultra',date:'Mar 09, 2026',amount:'$1,199',status:'Shipping'},
+  {id:'#NX-8817',customer:'James R.',product:'Dell XPS 15',date:'Mar 08, 2026',amount:'$1,849',status:'Processing'},
+  {id:'#NX-8816',customer:'Lena V.',product:'Apple Watch Ultra',date:'Mar 08, 2026',amount:'$799',status:'Delivered'},
+  {id:'#NX-8815',customer:'Tom B.',product:'ASUS ROG G16',date:'Mar 07, 2026',amount:'$1,649',status:'Pending'},
+  {id:'#NX-8814',customer:'Nina P.',product:'GoPro HERO13',date:'Mar 07, 2026',amount:'$399',status:'Delivered'},
+];
+
+let editingId = null;
+
+// ── NAV ──
+function showView(name, el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item-s').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Dashboard',products:'Products',analytics:'Analytics',orders:'Orders','add-product':'Add Product'};
+  document.getElementById('page-title').textContent=titles[name]||name;
+  document.getElementById('page-breadcrumb').textContent=`NEXUS / ADMIN / ${(titles[name]||name).toUpperCase()}`;
+  if(name==='products') renderAdminProducts();
+  if(name==='add-product'){clearForm(); editingId=null; document.getElementById('form-title').textContent='Add New Product'; document.getElementById('delete-prod-btn').style.display='none';}
+  if(name==='orders') renderOrders();
+  if(name==='analytics') setTimeout(initAnalyticsCharts,100);
+}
+
+// ── ADMIN PRODUCTS ──
+function getStockClass(s,status){
+  if(status==='Out of Stock'||s===0) return 'status-out';
+  if(s<=8) return 'status-low';
+  return 'status-active';
+}
+function getStockText(s,status){
+  if(status==='Out of Stock'||s===0) return 'Out of Stock';
+  if(s<=8) return 'Low Stock';
+  return 'In Stock';
+}
+
+function renderAdminProducts(){
+  const grid=document.getElementById('admin-prod-grid');
+  grid.innerHTML=products.map(p=>`
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="admin-prod-card">
+        <img src="${p.img}" class="admin-prod-img" alt="${p.name}" loading="lazy"/>
+        <div class="admin-prod-info">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:.3rem;">${p.brand} · ${p.category}</div>
+          <div class="admin-prod-name">${p.name}</div>
+          <div class="admin-prod-price">$${p.price}${p.old?` <span style="text-decoration:line-through;color:var(--muted);font-size:.7rem;">$${p.old}</span>`:''}</div>
+          <div class="admin-prod-stock"><span class="status-badge ${getStockClass(p.stock,p.status)}">${getStockText(p.stock,p.status)}</span> <span style="color:var(--muted);font-size:.6rem;">${p.stock} units</span></div>
+        </div>
+        <div class="admin-prod-actions">
+          <button class="tbl-action" style="flex:1;" onclick="editProduct(${p.id})"><i class="bi bi-pencil me-1"></i>Edit</button>
+          <button class="tbl-action danger" onclick="confirmDelete(${p.id})"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editProduct(id){
+  const p=products.find(x=>x.id===id);
+  editingId=id;
+  document.getElementById('edit-name').value=p.name;
+  document.getElementById('edit-price').value=p.price;
+  document.getElementById('edit-stock').value=p.stock;
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function saveEdit(){
+  const p=products.find(x=>x.id===editingId);
+  p.name=document.getElementById('edit-name').value;
+  p.price=parseFloat(document.getElementById('edit-price').value)||p.price;
+  p.stock=parseInt(document.getElementById('edit-stock').value)||0;
+  if(p.stock===0) p.status='Out of Stock';
+  closeModal();
+  renderAdminProducts();
+  adminToast('✅ Product updated successfully');
+}
+
+function confirmDelete(id){
+  const p=products.find(x=>x.id===id);
+  if(confirm(`Delete "${p.name}"?`)){
+    products=products.filter(x=>x.id!==id);
+    renderAdminProducts();
+    adminToast('🗑️ Product deleted','error');
+  }
+}
+
+function deleteCurrentProduct(){
+  if(editingId) confirmDelete(editingId);
+}
+
+// ── FORM ──
+['f-name','f-brand','f-price','f-stock'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('input',updatePreview);
+});
+function updatePreview(){
+  document.getElementById('prev-name').textContent=document.getElementById('f-name').value||'Product Name';
+  document.getElementById('prev-brand').textContent=(document.getElementById('f-brand').value||'Brand').toUpperCase();
+  document.getElementById('prev-price').textContent='$'+(document.getElementById('f-price').value||'0.00');
+  document.getElementById('prev-stock').textContent='Stock: '+(document.getElementById('f-stock').value||'0');
+  const imgUrl=document.getElementById('f-img').value;
+  if(imgUrl){document.getElementById('preview-img').src=imgUrl;document.getElementById('img-preview').style.display='block';}
+  else{document.getElementById('img-preview').style.display='none';}
+}
+document.getElementById('f-img').addEventListener('input',updatePreview);
+
+function saveProduct(){
+  const name=document.getElementById('f-name').value.trim();
+  const price=parseFloat(document.getElementById('f-price').value);
+  const brand=document.getElementById('f-brand').value;
+  const category=document.getElementById('f-category').value;
+  const stock=parseInt(document.getElementById('f-stock').value)||0;
+  if(!name||!price||!brand||!category){adminToast('⚠️ Please fill all required fields','error');return;}
+  const newProd={
+    id: products.length+1,
+    brand,name,price,
+    old:parseFloat(document.getElementById('f-oldprice').value)||null,
+    badge:document.getElementById('f-badge').value||null,
+    category,stock,
+    status:document.getElementById('f-status').value,
+    img:document.getElementById('f-img').value||'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=70'
+  };
+  products.push(newProd);
+  adminToast('✅ Product saved successfully!');
+  clearForm();
+  setTimeout(()=>showView('products',document.querySelectorAll('.nav-item-s')[1]),600);
+}
+
+function clearForm(){
+  ['f-name','f-brand','f-price','f-oldprice','f-stock','f-desc','f-img','f-category','f-badge'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  updatePreview();
+}
+
+// ── ORDERS ──
+function renderOrders(){
+  const statusMap={'Delivered':'status-active','Pending':'status-pending','Shipping':'status-low','Processing':'status-pending'};
+  document.getElementById('orders-table').innerHTML=orders.map(o=>`
+    <tr>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--cyan);">${o.id}</td>
+      <td>${o.customer}</td>
+      <td>${o.product}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);">${o.date}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-weight:500;">${o.amount}</td>
+      <td><span class="status-badge ${statusMap[o.status]||'status-pending'}">${o.status}</span></td>
+      <td><button class="tbl-action" onclick="adminToast('📋 Order ${o.id} details')">View</button></td>
+    </tr>
+  `).join('');
+}
+
+// ── TOAST ──
+function adminToast(msg,type=''){
+  const t=document.getElementById('admin-toast');
+  t.textContent=msg;
+  t.className='toast-admin show'+(type==='error'?' error':'');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── CHARTS ──
+const chartDefaults={
+  color:'rgba(232,244,255,0.7)',
+  plugins:{legend:{labels:{color:'rgba(232,244,255,0.5)',font:{family:'IBM Plex Mono',size:10},boxWidth:12}}},
+  scales:{
+    x:{grid:{color:'rgba(30,45,61,0.8)'},ticks:{color:'rgba(77,101,120,0.9)',font:{family:'IBM Plex Mono',size:10}}},
+    y:{grid:{color:'rgba(30,45,61,0.8)'},ticks:{color:'rgba(77,101,120,0.9)',font:{family:'IBM Plex Mono',size:10}}}
+  }
+};
+
+function initDashboardCharts(){
+  // Revenue
+  new Chart(document.getElementById('revenueChart'),{
+    type:'line',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[
+        {label:'Revenue 2026',data:[52000,61000,58000,74000,68000,84291,null,null,null,null,null,null],borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.06)',borderWidth:2,pointBackgroundColor:'#00d4ff',pointRadius:3,tension:.4,fill:true},
+        {label:'Revenue 2025',data:[41000,48000,50000,62000,58000,71000,66000,78000,72000,80000,85000,88000],borderColor:'rgba(255,107,43,0.5)',borderDash:[4,4],borderWidth:1.5,pointRadius:2,tension:.4,fill:false}
+      ]
+    },
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false}
+  });
+
+  // Category donut
+  new Chart(document.getElementById('categoryChart'),{
+    type:'doughnut',
+    data:{
+      labels:['Laptops','Phones','Audio','Wearables','Other'],
+      datasets:[{data:[38,27,18,11,6],backgroundColor:['#00d4ff','#ff6b2b','#00e87a','#ffc107','#ff3b5c'],borderWidth:0,hoverOffset:6}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'bottom',labels:{color:'rgba(232,244,255,0.5)',font:{family:'IBM Plex Mono',size:9},boxWidth:10,padding:10}}}}
+  });
+
+  // Top Products bar
+  new Chart(document.getElementById('topProdChart'),{
+    type:'bar',
+    data:{
+      labels:['MacBook','Galaxy S25','XPS 15','Watch Ultra','Sony WH'],
+      datasets:[{label:'Revenue ($)',data:[47976,45562,20339,15181,8970],backgroundColor:['rgba(0,212,255,.7)','rgba(255,107,43,.7)','rgba(0,232,122,.7)','rgba(255,193,7,.7)','rgba(255,59,92,.7)'],borderWidth:0,borderRadius:2}]
+    },
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},indexAxis:'y'}
+  });
+}
+
+function initAnalyticsCharts(){
+  const c1=document.getElementById('trafficChart');
+  const c2=document.getElementById('deviceChart');
+  if(c1._chartInst){c1._chartInst.destroy();}
+  if(c2._chartInst){c2._chartInst.destroy();}
+  c1._chartInst=new Chart(c1,{
+    type:'bar',
+    data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{label:'Visitors',data:[3200,4100,3800,5200,4700,6100,5400],backgroundColor:'rgba(0,212,255,.5)',borderColor:'#00d4ff',borderWidth:1,borderRadius:3}]},
+    options:{...chartDefaults,responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+  });
+  c2._chartInst=new Chart(c2,{
+    type:'pie',
+    data:{labels:['Mobile','Desktop','Tablet'],datasets:[{data:[58,33,9],backgroundColor:['#00d4ff','#ff6b2b','#00e87a'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'rgba(232,244,255,0.5)',font:{family:'IBM Plex Mono',size:9},boxWidth:10}}}}
+  });
+}
+
+// INIT
+initDashboardCharts();
+</script>
+</body>
+</html>
