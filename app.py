@@ -98,7 +98,7 @@ def userpage():
     cursor.close()
     conn.close()
 
-    return render_template("user_page.html", user=user)
+    return render_template("User.html", user=user)
 
 
 @app.route("/adminpage")
@@ -130,6 +130,77 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+# =========== Admin ==============
+
+products = [
+    {"name": "MacBook Pro", "price": 1999, "image_url": "https://picsum.photos/300/200"},
+    {"name": "iPhone 15", "price": 999, "image_url": "https://picsum.photos/301/200"},
+]
+@app.route('/admin')
+def admin_page():
+    return render_template('admin_dashboard.html', total_products=len(products))
+
+@app.route('/admin/products')
+def admin_products():
+    return render_template('admin_products.html', products=products)
+
+@app.route('/admin/add-product', methods=['GET','POST'])
+def add_product():
+    if request.method == 'POST':
+        name = request.form['name']
+        price = request.form['price']
+        old_price = request.form['old_price']
+        stock = request.form['stock']
+        # image handling skipped for simplicity
+        image_url = "https://picsum.photos/300/200"
+        products.append({"name": name, "price": price, "image_url": image_url})
+        return redirect(url_for('admin_products'))
+    return render_template('add_product.html')
+
+
+
+
+
+
+
+
+# @app.route("/add_product", methods=["POST"])
+# def add_product():
+#     connection = connect_db()
+#     cursor = connection.cursor()
+#     name = request.form["name"]
+#     brand = request.form["brand"]
+#     category = request.form["category"]
+#     price = request.form["price"]
+#     old_price = request.form["old_price"]
+#     stock = request.form["stock"]
+#     status = request.form["status"]
+#     badge = request.form["badge"]
+#     starts = request.form["starts"]
+#     reviews = request.form["reviews"]
+    
+#     file = request.files["image"]
+#     if file:
+#         image_path = "static/uploads/" + file.filename
+#         file.save(image_path)
+#         cursor.execute("INSERT INTO products2 (name, brand, category, price, old_price, stocks, status, badge, starts, img, reviews) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+#             (name, brand, category, price, old_price, stock, status, badge, starts, image_path, reviews)
+#         )
+#         connection.commit()
+#         cursor.close()
+#         connection.close()
+
+    
+#     return render_template("admin_page.html")
 
 if __name__ == "__main__":
     print("Server is running...")

@@ -1,0 +1,30 @@
+<!-- templates/add_product.html -->
+{% extends 'admin_page.html' %} {% block title %}Add Product{% endblock %} {%
+block page_title %}Add Product{% endblock %} {% block content %}
+
+<h4 class="text-light">Add Product</h4>
+<form method="POST" enctype="multipart/form-data" class="text-light">
+  <div class="mb-3">
+    <label>Name</label>
+    <input type="text" name="name" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Price</label>
+    <input type="number" name="price" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Old Price</label>
+    <input type="number" name="old_price" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Stock</label>
+    <input type="number" name="stock" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label>Image</label>
+    <input type="file" name="image" class="form-control" />
+  </div>
+  <button type="submit" class="btn btn-success">Save Product</button>
+  <button type="reset" class="btn btn-secondary">Clear Form</button>
+</form>
+{% endblock %}

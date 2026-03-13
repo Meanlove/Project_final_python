@@ -1,0 +1,193 @@
+
+
+ <!-- ===== ADD PRODUCT VIEW ===== -->
+        <div class="view" id="view-add-product">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h2
+                style="
+                  font-family: &quot;Syne&quot;, sans-serif;
+                  font-size: 1.5rem;
+                  font-weight: 700;
+                  color: var(--text);
+                "
+                id="form-title"
+              >
+                Add New Product
+              </h2>
+              <p
+                style="
+                  font-family: &quot;IBM Plex Mono&quot;, monospace;
+                  font-size: 0.6rem;
+                  letter-spacing: 0.15em;
+                  color: var(--muted);
+                "
+              >
+                FILL IN ALL REQUIRED FIELDS
+              </p>
+            </div>
+          </div>
+          <div class="form-card">
+            <div class="row g-4">
+              <div class="col-md-8">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label-n">Product Name *</label>
+                    <input
+                      class="form-control-n"
+                      name="name"
+                      type="text"
+                      id="f-name"
+                      placeholder="e.g. MacBook Pro M4 14-inch"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-n">Brand *</label>
+                    <select class="form-control-n" id="f-brand">
+                      <option value="">Select Brand</option>
+                      <option value="Apple">Apple</option>
+                      <option value="Samsung">Samsung</option>
+                      <option value="Sony">Sony</option>
+                      <option value="Dell">Dell</option>
+                      <option value="ASUS">ASUS</option>
+                      <option value="Bose">Bose</option>
+                      <option value="LG">LG</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-n">Category *</label>
+                    <select class="form-control-n" id="f-category">
+                      <option value="">Select Category</option>
+                      <option value="Smartphone">Smartphones</option>
+                      <option>Laptops</option>
+                      <option>Audio</option>
+                      <option>Wearables</option>
+                      <option>Cameras</option>
+                      <option>Gaming</option>
+                      <option>Accessories</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label-n">Price (USD) *</label>
+                    <input
+                      class="form-control-n"
+                      type="number"
+                      id="f-price"
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label-n">Original Price</label>
+                    <input
+                      class="form-control-n"
+                      type="number"
+                      id="f-oldprice"
+                      placeholder="Optional"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label-n">Stock Quantity *</label>
+                    <input
+                      class="form-control-n"
+                      type="number"
+                      id="f-stock"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-n">Badge</label>
+                    <select class="form-control-n" id="f-badge">
+                      <option value="">None</option>
+                      <option value="New">New</option>
+                      <option value="Sale">Sale</option>
+                      <option value="Hot">Hot</option>
+                      <option value="Exclusive">Exclusive</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-n">Status</label>
+                    <select class="form-control-n" id="f-status">
+                      <option>Active</option>
+                      <option>Draft</option>
+                      <option>Out of Stock</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-n">Description</label>
+                    <textarea
+                      class="form-control-n"
+                      id="f-desc"
+                      rows="4"
+                      placeholder="Describe the product features, specs..."
+                    ></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label-n">Image URL</label>
+                    <input
+                      class="form-control-n"
+                      type="text"
+                      id="f-img"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-n">Product Image</label>
+                <div
+                  class="img-upload-area"
+                  onclick="adminToast('📁 File picker coming soon')"
+                >
+                  <div class="img-upload-icon">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                  </div>
+                  <div class="img-upload-text">
+                    CLICK TO UPLOAD<br />PNG, JPG up to 10MB
+                  </div>
+                </div>
+                <div id="img-preview" class="mt-2" style="display: none">
+                  <img
+                    id="preview-img"
+                    src=""
+                    alt="Preview"
+                    style="
+                      width: 100%;
+                      aspect-ratio: 1;
+                      object-fit: cover;
+                      border: 1px solid var(--border);
+                    "
+                  />
+                </div>
+
+
+<div class="row g-3" id="admin-prod-grid"></div>
+
+<!-- EDIT MODAL -->
+    <div class="modal-n" id="edit-modal">
+      <div class="modal-box">
+        <div class="modal-title">Edit Product</div>
+        <div class="mb-3">
+          <label class="form-label-n">Product Name</label
+          ><input class="form-control-n" id="edit-name" type="text" />
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label-n">Price</label
+            ><input class="form-control-n" id="edit-price" type="number" />
+          </div>
+          <div class="col-6">
+            <label class="form-label-n">Stock</label
+            ><input class="form-control-n" id="edit-stock" type="number" />
+          </div>
+        </div>
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn-admin-outline" onclick="closeModal()">
+            Cancel
+          </button>
+          <button class="btn-admin-primary" onclick="saveEdit()">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,25 @@
+<!-- templates/admin_products.html -->
+{% extends 'admin_page.html' %}
+
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  {% for product in products %}
+  <div class="col-lg-3 col-md-4 col-sm-6">
+    <div class="card product-card shadow-sm">
+      <img src="{{ product.image_url }}" class="card-img-top product-img"/>
+      <div class="card-body">
+        <h6>{{ product.name }}</h6>
+        <p>${{ product.price }}</p>
+        <div class="d-flex gap-2">
+          <button class="btn btn-warning btn-sm w-50"><i class="bi bi-pencil"></i> Edit</button>
+          <button class="btn btn-danger btn-sm w-50"><i class="bi bi-trash"></i> Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
