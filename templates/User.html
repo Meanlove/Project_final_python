@@ -172,17 +172,120 @@
             <div class="line-cyan"></div>
           </div>
         </div>
-        <div class="filter-chips">
-          <button class="chip active" onclick="filterChip(this)">All</button>
-          <button class="chip" onclick="filterChip(this)">Smartphones</button>
-          <button class="chip" onclick="filterChip(this)">Laptops</button>
-          <button class="chip" onclick="filterChip(this)">Audio</button>
-          <button class="chip" onclick="filterChip(this)">Wearables</button>
-          <button class="chip" onclick="filterChip(this)">On Sale</button>
+        <!-- Replace the old static filter chips with this -->
+<div class="filter-chips">
+  <button class="chip active" onclick="filterProducts(this, 'all')">All</button>
+  {% set cats = [] %}
+  {% for p in products %}
+    {% if p.category and p.category not in cats %}
+      {% set _ = cats.append(p.category) %}
+      <button class="chip" onclick="filterProducts(this, '{{ p.category }}')">{{ p.category }}</button>
+    {% endif %}
+  {% endfor %}
+  <button class="chip" onclick="filterProducts(this, 'sale')">On Sale</button>
+</div>
+
+
+
+
+<div class="row g-4" id="prod-grid">
+  {% for product in products %}
+  <div class="col-6 col-md-4 col-lg-3 prod-item"
+       data-category="{{ product.category or 'other' }}"
+       data-sale="{{ 'true' if product.old_price else 'false' }}">
+    <div class="product-card">
+      <div class="product-img-wrap">
+        {% if product.img %}
+        <img src="{{ url_for('static', filename='uploads/' + product.img) }}"
+             alt="{{ product.name }}" loading="lazy"
+             onerror="this.src='https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80'"/>
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80"
+             alt="{{ product.name }}" loading="lazy"/>
+        {% endif %}
+
+        {% if product.old_price and product.old_price > product.price %}
+        <div class="prod-badge badge-sale">Sale</div>
+        {% elif loop.index <= 3 %}
+        <div class="prod-badge badge-new">New</div>
+        {% endif %}
+
+        <div class="prod-actions">
+          <button class="act-btn" onclick="showToast('♡ Saved to wishlist')">
+            <i class="bi bi-heart"></i>
+          </button>
+          <button class="act-btn" onclick="showToast('🔍 Quick view')">
+            <i class="bi bi-eye"></i>
+          </button>
         </div>
-        <div class="row g-4" id="prod-grid">
-          <!-- Products generated from JS data -->
+      </div>
+
+      <div class="prod-info">
+        {% if product.category %}
+        <div class="prod-brand">{{ product.category }}</div>
+        {% endif %}
+        <div class="prod-name">{{ product.name }}</div>
+
+        {% if product.description %}
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem;
+                    overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
+                    -webkit-box-orient:vertical;">
+          {{ product.description }}
         </div>
+        {% endif %}
+
+        <div class="prod-price">
+          {% if product.old_price and product.old_price > product.price %}
+            <span class="old">${{ product.old_price }}</span>
+            <span class="sale">${{ product.price }}</span>
+            <span style="font-size:0.65rem;background:rgba(255,107,43,0.15);
+                         color:var(--orange);padding:2px 6px;
+                         font-family:'IBM Plex Mono',monospace;">
+              -{{ ((product.old_price - product.price) / product.old_price * 100)|round|int }}%
+            </span>
+          {% else %}
+            ${{ product.price }}
+          {% endif %}
+        </div>
+
+        <div style="margin-top:0.5rem;">
+          {% if product.stock > 10 %}
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;
+                       letter-spacing:0.1em;color:var(--green);">
+            <i class="bi bi-check-circle"></i> In Stock
+          </span>
+          {% elif product.stock > 0 %}
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;
+                       letter-spacing:0.1em;color:var(--orange);">
+            <i class="bi bi-exclamation-circle"></i> Only {{ product.stock }} left
+          </span>
+          {% else %}
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;
+                       letter-spacing:0.1em;color:#f87171;">
+            <i class="bi bi-x-circle"></i> Out of Stock
+          </span>
+          {% endif %}
+        </div>
+      </div>
+<!-- 
+      <button class="btn-cart"
+              onclick="addToCartDB({{ product.id }}, '{{ product.name }}', {{ product.price }}, '{{ product.img or '' }}')"
+              {% if product.stock == 0 %}disabled style="opacity:0.4;cursor:not-allowed;"{% endif %}>
+        <i class="bi bi-bag me-1"></i>
+        {% if product.stock == 0 %}Out of Stock{% else %}Add to Cart{% endif %}
+      </button> -->
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12 text-center" style="padding:4rem 0;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--muted);">
+      — No products available yet —
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+        
         <div class="text-center mt-5">
           <button
             class="btn-outline-n px-5"

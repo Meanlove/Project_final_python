@@ -1,12 +1,697 @@
-<!-- templates/admin_dashboard.html -->
-{% extends 'admin_page.html' %}
+{% extends 'admin_page.html' %} {% block title %}Dashboard{% endblock %} {%
+block page_title %}Dashboard{% endblock %} {% block content %}
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .dash {
+    padding: 0;
+  }
+  .welcome-banner {
+    background: #1a1a2e;
+    border: 1px solid #2a2f45;
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .welcome-left h4 {
+    color: #e2e8f0;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .welcome-left p {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 0;
+  }
+  .welcome-right {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-pd {
+    background: #4f46e5;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .btn-pd:hover {
+    background: #4338ca;
+  }
+  .btn-od {
+    background: transparent;
+    color: #818cf8;
+    border: 1px solid #3730a3;
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .btn-od:hover {
+    background: #1e1b4b;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .stat-card {
+    background: #1e2130;
+    border: 1px solid #2a2f45;
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .ic-purple {
+    background: #1e1b4b;
+    color: #818cf8;
+  }
+  .ic-green {
+    background: #0d2b1a;
+    color: #4ade80;
+  }
+  .ic-amber {
+    background: #2b1f07;
+    color: #fbbf24;
+  }
+  .ic-red {
+    background: #2b0a0a;
+    color: #f87171;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #4f5070;
+    margin-bottom: 3px;
+  }
+  .stat-val {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 3px;
+  }
+  .stat-diff {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .up {
+    color: #4ade80;
+  }
+  .down {
+    color: #f87171;
+  }
+  .neutral {
+    color: #6b7280;
+  }
+  .charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .panel {
+    background: #1e2130;
+    border: 1px solid #2a2f45;
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a5b4fc;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .period-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .ptab {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #4f5070;
+  }
+  .ptab.active {
+    background: #1e1b4b;
+    color: #818cf8;
+  }
+  .legend {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: #6b7280;
+  }
+  .leg-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+  .bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 8px 0;
+    border-bottom: 1px solid #161822;
+  }
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+  .act-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .act-text {
+    flex: 1;
+  }
+  .act-text p {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin: 0 0 1px;
+  }
+  .act-text span {
+    font-size: 11px;
+    color: #4f5070;
+  }
+  .act-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .badge-new {
+    background: #1e1b4b;
+    color: #818cf8;
+  }
+  .badge-edit {
+    background: #2b1f07;
+    color: #fbbf24;
+  }
+  .badge-del {
+    background: #2b0a0a;
+    color: #f87171;
+  }
+  .tp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #161822;
+  }
+  .tp-item:last-child {
+    border-bottom: none;
+  }
+  .tp-rank {
+    font-size: 12px;
+    font-weight: 700;
+    color: #4f5070;
+    width: 16px;
+    text-align: center;
+  }
+  .tp-name {
+    flex: 1;
+    font-size: 13px;
+    color: #cbd5e1;
+  }
+  .tp-bar-wrap {
+    width: 80px;
+    height: 5px;
+    background: #161822;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .tp-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: #4f46e5;
+  }
+  .tp-val {
+    font-size: 12px;
+    color: #818cf8;
+    width: 32px;
+    text-align: right;
+  }
+</style>
 
-{% block title %}Dashboard{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+<div class="dash">
+  <div class="welcome-banner">
+    <div class="welcome-left">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 6px;
+        "
+      >
+        <div
+          style="
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 6px #4ade80;
+            animation: pulse 2s infinite;
+          "
+        ></div>
+        <span
+          style="
+            font-family: &quot;IBM Plex Mono&quot;, monospace;
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #4ade80;
+          "
+        >
+          Online
+        </span>
+      </div>
 
-{% block content %}
-<div class="text-light">
-  <h4>Products Summary</h4>
-  <p>Total Products: {{ total_products }}</p>
+      <h4
+        style="
+          color: #e2e8f0;
+          font-size: 20px;
+          font-weight: 700;
+          margin: 0 0 4px;
+        "
+      >
+        Welcome back,
+        <span style="color: #818cf8">{{ admin.username }}</span> 👋
+      </h4>
+
+      <p style="font-size: 13px; color: #6b7280; margin: 0 0 8px">
+        Here's what's happening in your store today.
+      </p>
+
+      <div
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: #1e1b4b;
+          border: 1px solid #3730a3;
+          border-radius: 99px;
+          padding: 6px 16px;
+        "
+      >
+        <i
+          class="bi bi-heart-fill"
+          style="
+            color: #f87171;
+            font-size: 12px;
+            animation: heartbeat 1.2s ease infinite;
+          "
+        ></i>
+        <span
+          style="
+            font-family: &quot;Kantumruy Pro&quot;, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #a5b4fc;
+            letter-spacing: 0.02em;
+          "
+        >
+          ឈប់ស្រឡាញ់គេម្នាក់ឯងនៅ
+          <strong style="color: #818cf8; font-weight: 600"
+            >{{ admin.username }}</strong
+          >
+          ?
+        </span>
+      </div>
+    </div>
+
+    <style>
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.5;
+          transform: scale(1.4);
+        }
+      }
+      @keyframes heartbeat {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        25% {
+          transform: scale(1.3);
+        }
+        50% {
+          transform: scale(1);
+        }
+        75% {
+          transform: scale(1.2);
+        }
+      }
+    </style>
+    <div class="welcome-right">
+      <a href="{{ url_for('add_product') }}" class="btn-pd"
+        ><i class="bi bi-plus-lg"></i> Add Product</a
+      >
+      <a href="{{ url_for('admin_products') }}" class="btn-od"
+        ><i class="bi bi-grid"></i> View All</a
+      >
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon ic-purple"><i class="bi bi-box-seam"></i></div>
+      <div class="stat-label">Total Products</div>
+      <div class="stat-val">{{ total_products }}</div>
+      <div class="stat-diff up">
+        <i class="bi bi-arrow-up-short"></i> 4 this week
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon ic-green"><i class="bi bi-bag-check"></i></div>
+      <div class="stat-label">Orders</div>
+      <div class="stat-val">284</div>
+      <div class="stat-diff up">
+        <i class="bi bi-arrow-up-short"></i> 12% this month
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon ic-amber"><i class="bi bi-people"></i></div>
+      <div class="stat-label">Customers</div>
+      <div class="stat-val">1,340</div>
+      <div class="stat-diff up">
+        <i class="bi bi-arrow-up-short"></i> 8% this month
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon ic-red"><i class="bi bi-currency-dollar"></i></div>
+      <div class="stat-label">Revenue</div>
+      <div class="stat-val">$18.4k</div>
+      <div class="stat-diff down">
+        <i class="bi bi-arrow-down-short"></i> 3% vs last month
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="bi bi-graph-up"></i> Sales overview
+        </div>
+        <div class="period-tabs">
+          <button class="ptab">7d</button>
+          <button class="ptab active">30d</button>
+          <button class="ptab">90d</button>
+        </div>
+      </div>
+      <div class="legend">
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #818cf8"></span
+          >Revenue</span
+        >
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #4ade80"></span>Orders</span
+        >
+      </div>
+      <div style="position: relative; width: 100%; height: 200px">
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="bi bi-pie-chart"></i> Categories
+        </div>
+      </div>
+      <div style="position: relative; width: 100%; height: 160px">
+        <canvas id="catChart"></canvas>
+      </div>
+      <div class="legend" style="margin-top: 12px; flex-wrap: wrap; gap: 8px">
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #818cf8"></span>Electronics
+          40%</span
+        >
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #4ade80"></span>Clothing
+          25%</span
+        >
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #fbbf24"></span>Food
+          20%</span
+        >
+        <span class="leg-item"
+          ><span class="leg-dot" style="background: #f87171"></span>Other
+          15%</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i class="bi bi-clock-history"></i> Recent Activity
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon ic-purple"><i class="bi bi-plus"></i></div>
+        <div class="act-text">
+          <p>New product added</p>
+          <span>2 minutes ago</span>
+        </div>
+        <span class="act-badge badge-new">New</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon ic-amber"><i class="bi bi-pencil"></i></div>
+        <div class="act-text">
+          <p>Product updated</p>
+          <span>1 hour ago</span>
+        </div>
+        <span class="act-badge badge-edit">Edit</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon ic-red"><i class="bi bi-trash"></i></div>
+        <div class="act-text">
+          <p>Product removed</p>
+          <span>3 hours ago</span>
+        </div>
+        <span class="act-badge badge-del">Delete</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-icon ic-purple"><i class="bi bi-plus"></i></div>
+        <div class="act-text">
+          <p>New product added</p>
+          <span>Yesterday</span>
+        </div>
+        <span class="act-badge badge-new">New</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title"><i class="bi bi-trophy"></i> Top products</div>
+      </div>
+      <div class="tp-item">
+        <span class="tp-rank">1</span
+        ><span class="tp-name">Wireless Headphones</span>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar" style="width: 90%"></div>
+        </div>
+        <span class="tp-val">$4.2k</span>
+      </div>
+      <div class="tp-item">
+        <span class="tp-rank">2</span><span class="tp-name">Smart Watch</span>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar" style="width: 72%"></div>
+        </div>
+        <span class="tp-val">$3.1k</span>
+      </div>
+      <div class="tp-item">
+        <span class="tp-rank">3</span><span class="tp-name">Running Shoes</span>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar" style="width: 55%"></div>
+        </div>
+        <span class="tp-val">$2.4k</span>
+      </div>
+      <div class="tp-item">
+        <span class="tp-rank">4</span><span class="tp-name">Laptop Stand</span>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar" style="width: 38%"></div>
+        </div>
+        <span class="tp-val">$1.6k</span>
+      </div>
+      <div class="tp-item">
+        <span class="tp-rank">5</span><span class="tp-name">USB-C Hub</span>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar" style="width: 24%"></div>
+        </div>
+        <span class="tp-val">$1.0k</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  document.querySelectorAll(".ptab").forEach((t) =>
+    t.addEventListener("click", () => {
+      document
+        .querySelectorAll(".ptab")
+        .forEach((x) => x.classList.remove("active"));
+      t.classList.add("active");
+    }),
+  );
+
+  new Chart(document.getElementById("salesChart"), {
+    type: "line",
+    data: {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      datasets: [
+        {
+          label: "Revenue",
+          data: [
+            3200, 4100, 3800, 5200, 4700, 6100, 5800, 7200, 6500, 8100, 7400,
+            9200,
+          ],
+          borderColor: "#818cf8",
+          backgroundColor: "rgba(129,140,248,0.08)",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: "#818cf8",
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: "Orders",
+          data: [180, 220, 190, 280, 240, 310, 290, 360, 320, 410, 370, 460],
+          borderColor: "#4ade80",
+          backgroundColor: "rgba(74,222,128,0.06)",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: "#4ade80",
+          tension: 0.4,
+          fill: true,
+          yAxisID: "y2",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          ticks: { color: "#4f5070", font: { size: 11 } },
+          grid: { color: "#1a1a2e" },
+        },
+        y: {
+          ticks: {
+            color: "#4f5070",
+            font: { size: 11 },
+            callback: (v) => "$" + (v / 1000).toFixed(1) + "k",
+          },
+          grid: { color: "#1a1a2e" },
+        },
+        y2: {
+          position: "right",
+          ticks: { color: "#4f5070", font: { size: 11 } },
+          grid: { display: false },
+        },
+      },
+    },
+  });
+
+  new Chart(document.getElementById("catChart"), {
+    type: "doughnut",
+    data: {
+      labels: ["Electronics", "Clothing", "Food", "Other"],
+      datasets: [
+        {
+          data: [40, 25, 20, 15],
+          backgroundColor: ["#818cf8", "#4ade80", "#fbbf24", "#f87171"],
+          borderWidth: 0,
+          hoverOffset: 6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "68%",
+      plugins: { legend: { display: false } },
+    },
+  });
+</script>
 {% endblock %}

@@ -1108,7 +1108,7 @@
             <a href="{{url_for('userpage')}}" class="nav-link-n active-nav"
               >Home</a
             >
-            <a href="{{ url_for('products') }}" class="nav-link-n">Products</a>
+            <a href="{{ url_for('products_page') }}" class="nav-link-n">Products</a>
             <a href="{{url_for('about')}}" class="nav-link-n">About Us</a>
             <a href="{{url_for('contact')}}" class="nav-link-n">Contact</a>
           </div>
@@ -1383,34 +1383,14 @@
 
       let cart = [];
 
-      function renderProducts() {
-        const grid = document.getElementById("prod-grid");
-        grid.innerHTML = products
-          .map(
-            (p) => `
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <img src="${p.img}" alt="${p.name}" loading="lazy"/>
-          ${p.badge ? `<div class="prod-badge ${p.badgeClass}">${p.badge}</div>` : ""}
-          <div class="prod-actions">
-            <button class="act-btn" onclick="showToast('♡ Saved to wishlist')"><i class="bi bi-heart"></i></button>
-            <button class="act-btn" onclick="showToast('🔍 Quick view')"><i class="bi bi-eye"></i></button>
-          </div>
-        </div>
-        <div class="prod-info">
-          <div class="prod-brand">${p.brand}</div>
-          <div class="prod-name">${p.name}</div>
-          <div><span class="prod-stars">${"★".repeat(p.stars)}${"☆".repeat(5 - p.stars)}</span><span class="prod-review">(${p.reviews})</span></div>
-          <div class="prod-price">${p.old ? `<span class="old">$${p.old}</span><span class="sale">$${p.price}</span>` : `$${p.price}`}</div>
-        </div>
-        <button class="btn-cart" onclick="addToCart(${p.id})"><i class="bi bi-bag me-1"></i>Add to Cart</button>
-      </div>
-    </div>
-  `,
-          )
-          .join("");
-      }
+// ✅ ADD this instead:
+function addToCartDB(id, name, price, img) {
+  const existing = cart.find(x => x.id === id);
+  if (existing) existing.qty++;
+  else cart.push({ id, name, price, img: img ? '/static/uploads/' + img : '', qty: 1 });
+  updateCart();
+  showToast('✓ ' + name + ' added to cart');
+}
 
       function addToCart(id) {
         const p = products.find((x) => x.id === id);
@@ -1499,7 +1479,22 @@
       tick();
       setInterval(tick, 1000);
 
-      renderProducts();
+      function filterProducts(el, cat) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.prod-item').forEach(item => {
+    if (cat === 'all') {
+      item.style.display = 'block';
+    } else if (cat === 'sale') {
+      item.style.display = item.dataset.sale === 'true' ? 'block' : 'none';
+    } else {
+      item.style.display = item.dataset.category === cat ? 'block' : 'none';
+    }
+  });
+}
+
+
+      
     </script>
   </body>
 </html>

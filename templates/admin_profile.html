@@ -1,0 +1,219 @@
+{% extends 'admin_page.html' %}
+{% block title %}Profile{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block content %}
+<style>
+.profile-wrap{max-width:860px;margin:0 auto;}
+.profile-header{background:#1a1a2e;border:1px solid #2a2f45;border-radius:16px;padding:28px;display:flex;align-items:center;gap:24px;margin-bottom:18px;}
+.avatar-ring{position:relative;width:80px;height:80px;flex-shrink:0;}
+.avatar-ring img{width:80px;height:80px;border-radius:50%;border:3px solid #4f46e5;object-fit:cover;}
+.avatar-edit-btn{position:absolute;bottom:0;right:0;width:26px;height:26px;border-radius:50%;background:#4f46e5;border:2px solid #1a1a2e;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;cursor:pointer;text-decoration:none;}
+.profile-info h4{color:#e2e8f0;font-size:20px;font-weight:700;margin:0 0 4px;}
+.profile-info p{color:#6b7280;font-size:13px;margin:0 0 10px;}
+.profile-badges{display:flex;gap:8px;flex-wrap:wrap;}
+.pbadge{font-size:11px;padding:3px 12px;border-radius:99px;display:inline-flex;align-items:center;gap:5px;}
+.pbadge-role{background:#1e1b4b;color:#818cf8;border:1px solid #3730a3;}
+.pbadge-status{background:#0d2b1a;color:#4ade80;border:1px solid #14532d;}
+.profile-actions{margin-left:auto;}
+.btn-edit-profile{background:#4f46e5;color:#fff;border:none;border-radius:10px;padding:9px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;text-decoration:none;}
+.btn-edit-profile:hover{background:#4338ca;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.panel{background:#1e2130;border:1px solid #2a2f45;border-radius:14px;padding:18px 20px;}
+.panel-title{font-size:13px;font-weight:600;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+.info-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #161822;}
+.info-row:last-child{border-bottom:none;}
+.info-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:#1e1b4b;color:#818cf8;}
+.info-label{font-size:11px;color:#4f5070;margin-bottom:1px;}
+.info-val{font-size:14px;color:#e2e8f0;font-weight:500;}
+.edit-section{background:#1e2130;border:1px solid #2a2f45;border-radius:14px;padding:20px 22px;margin-bottom:14px;}
+.edit-title{font-size:13px;font-weight:600;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:18px;display:flex;align-items:center;gap:7px;padding-bottom:12px;border-bottom:1px solid #161822;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.flabel{font-size:12px;color:#6b7280;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:5px;}
+.finput{background:#161822;border:1px solid #2a2f45;border-radius:10px;padding:10px 14px;color:#e2e8f0;font-size:14px;transition:border-color 0.2s;width:100%;}
+.finput:focus{outline:none;border-color:#4f46e5;background:#1a1a2e;}
+.finput:hover{border-color:#3730a3;}
+.phone-wrap{display:flex;gap:8px;}
+.phone-code{background:#161822;border:1px solid #2a2f45;border-radius:10px;padding:10px 12px;color:#818cf8;font-size:14px;width:110px;flex-shrink:0;}
+.phone-code:focus{outline:none;border-color:#4f46e5;}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#3a3a5c;font-size:12px;}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:#2a2f45;}
+.btn-save{background:#4f46e5;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background 0.2s;}
+.btn-save:hover{background:#4338ca;}
+.btn-cancel{background:transparent;color:#6b7280;border:1px solid #2a2f45;border-radius:10px;padding:10px 20px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.2s;text-decoration:none;}
+.btn-cancel:hover{border-color:#4f46e5;color:#818cf8;}
+.btn-danger{background:#2b0f10;color:#f87171;border:1px solid #7f1d1d;border-radius:10px;padding:10px 20px;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all 0.2s;}
+.btn-danger:hover{background:#3f1515;}
+.form-actions{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:4px;}
+.form-actions-left{display:flex;gap:10px;}
+.alert-success{background:#0d2b1a;border:1px solid #14532d;color:#4ade80;padding:10px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.alert-error{background:#2b0a0a;border:1px solid #7f1d1d;color:#f87171;padding:10px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+</style>
+
+<div class="profile-wrap">
+
+  <div class="profile-header">
+    <!-- avatar display in profile header -->
+<div class="avatar-ring">
+  {% if admin.profile_img %}
+    <img src="{{ url_for('static', filename='uploads/' + admin.profile_img) }}"
+         id="avatarPreview"/>
+  {% else %}
+    <img src="https://i.pravatar.cc/80?u={{ admin.id }}"
+         id="avatarPreview"/>
+  {% endif %}
+  <label for="profile_img_input" class="avatar-edit-btn" title="Change photo">
+    <i class="bi bi-camera-fill"></i>
+  </label>
+</div>
+    <div class="profile-info">
+      <h4>{{ admin.username }}</h4>
+      <p>{{ admin.email }}</p>
+      <div class="profile-badges">
+        <span class="pbadge pbadge-role"><i class="bi bi-shield-fill"></i> Administrator</span>
+        <span class="pbadge pbadge-status"><i class="bi bi-circle-fill" style="font-size:7px;"></i> Active</span>
+      </div>
+    </div>
+    <div class="profile-actions">
+      <a href="#editForm" class="btn-edit-profile"><i class="bi bi-pencil-fill"></i> Edit Profile</a>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><i class="bi bi-person-lines-fill"></i> Account Info</div>
+      <div class="info-row">
+        <div class="info-icon"><i class="bi bi-person"></i></div>
+        <div><div class="info-label">Username</div><div class="info-val">{{ admin.username }}</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon"><i class="bi bi-envelope"></i></div>
+        <div><div class="info-label">Email</div><div class="info-val">{{ admin.email }}</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon" style="background:#0d2b1a;color:#4ade80;"><i class="bi bi-phone"></i></div>
+        <div><div class="info-label">Phone</div><div class="info-val">{{ admin.phone or '— Not set' }}</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon" style="background:#2b1f07;color:#fbbf24;"><i class="bi bi-shield-lock"></i></div>
+        <div><div class="info-label">Role</div><div class="info-val">{{ admin.role }}</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><i class="bi bi-bar-chart-fill"></i> Activity Summary</div>
+      <div class="info-row">
+        <div class="info-icon"><i class="bi bi-box-seam"></i></div>
+        <div><div class="info-label">Products Added</div><div class="info-val">{{ total_products }}</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon" style="background:#0d2b1a;color:#4ade80;"><i class="bi bi-bag-check"></i></div>
+        <div><div class="info-label">Orders Managed</div><div class="info-val">284</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon" style="background:#2b1f07;color:#fbbf24;"><i class="bi bi-people"></i></div>
+        <div><div class="info-label">Customers</div><div class="info-val">1,340</div></div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon" style="background:#2b0a0a;color:#f87171;"><i class="bi bi-clock-history"></i></div>
+        <div><div class="info-label">Last Login</div><div class="info-val">Today</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edit-section" id="editForm">
+    <div class="edit-title"><i class="bi bi-pencil-square"></i> Edit Profile</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert-{{ category }}">
+            <i class="bi bi-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- ✅ add enctype -->
+<form method="POST" action="{{ url_for('admin_profile_edit') }}"
+      enctype="multipart/form-data" id="profileForm">
+
+  <!-- hidden file input triggered by camera button -->
+  <input type="file" name="profile_img" id="profile_img_input"
+         accept="image/*" style="display:none;"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="flabel"><i class="bi bi-person" style="font-size:12px;"></i> Username</label>
+          <input type="text" name="username" class="finput" value="{{ admin.username }}" required/>
+        </div>
+        <div class="form-group">
+          <label class="flabel"><i class="bi bi-envelope" style="font-size:12px;"></i> Email</label>
+          <input type="email" name="email" class="finput" value="{{ admin.email }}" required/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group full">
+          <label class="flabel"><i class="bi bi-phone" style="font-size:12px;"></i> Phone Number</label>
+          <div class="phone-wrap">
+            <select name="phone_code" class="finput phone-code">
+              <option value="+855" {% if admin.phone_code == '+855' %}selected{% endif %}>🇰🇭 +855</option>
+              <option value="+1"   {% if admin.phone_code == '+1'   %}selected{% endif %}>🇺🇸 +1</option>
+              <option value="+44"  {% if admin.phone_code == '+44'  %}selected{% endif %}>🇬🇧 +44</option>
+              <option value="+66"  {% if admin.phone_code == '+66'  %}selected{% endif %}>🇹🇭 +66</option>
+              <option value="+84"  {% if admin.phone_code == '+84'  %}selected{% endif %}>🇻🇳 +84</option>
+              <option value="+60"  {% if admin.phone_code == '+60'  %}selected{% endif %}>🇲🇾 +60</option>
+              <option value="+65"  {% if admin.phone_code == '+65'  %}selected{% endif %}>🇸🇬 +65</option>
+              <option value="+62"  {% if admin.phone_code == '+62'  %}selected{% endif %}>🇮🇩 +62</option>
+              <option value="+86"  {% if admin.phone_code == '+86'  %}selected{% endif %}>🇨🇳 +86</option>
+              <option value="+81"  {% if admin.phone_code == '+81'  %}selected{% endif %}>🇯🇵 +81</option>
+            </select>
+            <input type="tel" name="phone" class="finput"
+                   value="{{ admin.phone or '' }}"
+                   placeholder="012 345 678" style="flex:1;"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider">Change Password</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="flabel"><i class="bi bi-lock" style="font-size:12px;"></i> New Password</label>
+          <input type="password" name="new_password" class="finput" placeholder="Leave blank to keep current"/>
+        </div>
+        <div class="form-group">
+          <label class="flabel"><i class="bi bi-lock-fill" style="font-size:12px;"></i> Confirm Password</label>
+          <input type="password" name="confirm_password" class="finput" placeholder="Repeat new password"/>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="form-actions-left">
+          <button type="submit" class="btn-save"><i class="bi bi-check-lg"></i> Save Changes</button>
+          <a href="{{ url_for('admin_dashboard') }}" class="btn-cancel"><i class="bi bi-x-lg"></i> Cancel</a>
+        </div>
+        <a href="{{ url_for('admin_delete_account') }}" class="btn-danger"
+           onclick="return confirm('Are you sure? This cannot be undone.')">
+          <i class="bi bi-trash3"></i> Delete Account
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('profile_img_input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('avatarPreview').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %}

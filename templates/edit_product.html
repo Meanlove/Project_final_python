@@ -1,0 +1,135 @@
+{% extends 'admin_page.html' %}
+{% block title %}Edit Product{% endblock %}
+{% block page_title %}Edit Product{% endblock %}
+
+{% block content %}
+<style>
+.form-card { background: rgba(18,22,35,0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.06); border-radius: 2rem; padding: 2.5rem 2.2rem; width: 100%; max-width: 720px; margin: 0 auto; box-shadow: 0 30px 50px rgba(0,0,0,0.7); }
+.form-label { font-weight: 500; color: #d0d9ff; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; text-transform: uppercase; opacity: 0.9; }
+.form-control, .form-control:focus { background: rgba(0,0,0,0.45); border: 1.5px solid rgba(255,255,255,0.08); border-radius: 1.2rem; padding: 0.75rem 1.2rem; color: #f0f3ff; font-size: 1rem; transition: all 0.2s; width: 100%; }
+.form-control:focus { border-color: #f8c150; background: rgba(10,15,30,0.8); box-shadow: 0 0 0 3px rgba(248,193,80,0.15); color: #fff; outline: none; }
+.form-control:hover { border-color: rgba(255,190,80,0.3); }
+select.form-control option { background: #1a1a2e; }
+textarea.form-control { resize: vertical; min-height: 90px; border-radius: 1rem; }
+.form-control[type="file"] { padding: 0.4rem 0.75rem; line-height: 2; color: #b7c3f0; }
+.form-control[type="file"]::file-selector-button { background: #2c3147; border: 1px solid rgba(255,200,100,0.4); border-radius: 1.5rem; color: #f5d792; padding: 0.45rem 1.4rem; margin-right: 1rem; }
+.current-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 1rem; border: 2px solid rgba(255,215,0,0.3); margin-bottom: 10px; }
+.btn-save { background: linear-gradient(145deg, #1f3b2c, #154d2e); border: 1px solid rgba(100,255,150,0.25); border-radius: 3rem; padding: 0.8rem 2rem; font-weight: 600; color: #e3ffd3; transition: 0.2s; flex: 1; cursor: pointer; }
+.btn-save:hover { background: linear-gradient(145deg, #256f3a, #1e8a41); color: white; }
+.btn-cancel { background: rgba(45,52,75,0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 3rem; padding: 0.8rem 2rem; font-weight: 500; color: #cbd5ff; transition: 0.2s; flex: 1; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-cancel:hover { background: rgba(65,75,110,0.95); color: #fff; }
+</style>
+
+<div class="form-card">
+  <div class="d-flex align-items-center gap-2 mb-4 pb-1"
+       style="border-bottom: 1px dashed rgba(255,215,0,0.25)">
+    <i class="bi bi-pencil-square" style="color:#f8c150;font-size:1.7rem"></i>
+    <span style="font-size:1.8rem;font-weight:600;background:linear-gradient(130deg,#f3e7b0,#fdd998);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+      edit product
+    </span>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data">
+
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-tag"></i> Name</label>
+      <input type="text" name="name" class="form-control" value="{{ product.name }}" required/>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-grid"></i> Category</label>
+      <select name="category" class="form-control">
+        <option value="">— Select category —</option>
+        <optgroup label="Electronics & Gadgets">
+          <option value="Smartphones"   {% if product.category == 'Smartphones' %}selected{% endif %}>Smartphones</option>
+          <option value="Laptops"       {% if product.category == 'Laptops' %}selected{% endif %}>Laptops</option>
+          <option value="Tablets"       {% if product.category == 'Tablets' %}selected{% endif %}>Tablets</option>
+          <option value="Headphones"    {% if product.category == 'Headphones' %}selected{% endif %}>Headphones & Audio</option>
+          <option value="Cameras"       {% if product.category == 'Cameras' %}selected{% endif %}>Cameras</option>
+          <option value="Smart Watches" {% if product.category == 'Smart Watches' %}selected{% endif %}>Smart Watches</option>
+          <option value="Gaming"        {% if product.category == 'Gaming' %}selected{% endif %}>Gaming</option>
+          <option value="Accessories"   {% if product.category == 'Accessories' %}selected{% endif %}>Accessories</option>
+        </optgroup>
+        <optgroup label="Fashion">
+          <option value="Clothing" {% if product.category == 'Clothing' %}selected{% endif %}>Clothing</option>
+          <option value="Shoes"    {% if product.category == 'Shoes' %}selected{% endif %}>Shoes</option>
+          <option value="Bags"     {% if product.category == 'Bags' %}selected{% endif %}>Bags</option>
+        </optgroup>
+        <optgroup label="Food & Drinks">
+          <option value="Food"      {% if product.category == 'Food' %}selected{% endif %}>Food</option>
+          <option value="Beverages" {% if product.category == 'Beverages' %}selected{% endif %}>Beverages</option>
+        </optgroup>
+        <optgroup label="Sports & Outdoors">
+          <option value="Sports"  {% if product.category == 'Sports' %}selected{% endif %}>Sports Equipment</option>
+          <option value="Outdoor" {% if product.category == 'Outdoor' %}selected{% endif %}>Outdoor & Camping</option>
+          <option value="Fitness" {% if product.category == 'Fitness' %}selected{% endif %}>Fitness & Gym</option>
+        </optgroup>
+        <optgroup label="Home & Living">
+          <option value="Furniture" {% if product.category == 'Furniture' %}selected{% endif %}>Furniture</option>
+          <option value="Kitchen"   {% if product.category == 'Kitchen' %}selected{% endif %}>Kitchen</option>
+          <option value="Decor"     {% if product.category == 'Decor' %}selected{% endif %}>Home Decor</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="Other" {% if product.category == 'Other' %}selected{% endif %}>Other</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-card-text"></i> Description</label>
+      <textarea name="description" class="form-control">{{ product.description or '' }}</textarea>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label class="form-label"><i class="bi bi-currency-dollar"></i> Price</label>
+        <input type="number" name="price" class="form-control" value="{{ product.price }}" step="0.01" required/>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="bi bi-tag"></i> Old Price</label>
+        <input type="number" name="old_price" class="form-control" value="{{ product.old_price or '' }}" step="0.01"/>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-boxes"></i> Stock</label>
+      <input type="number" name="stock" class="form-control" value="{{ product.stock }}" required/>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label"><i class="bi bi-camera"></i> Image</label>
+      {% if product.img %}
+      <img src="{{ url_for('static', filename='uploads/' + product.img) }}"
+           class="current-img" id="currentImg"/>
+      {% endif %}
+      <input type="file" name="image" class="form-control" accept="image/*" id="newImgInput"/>
+      <div style="font-size:12px;color:#6b7280;margin-top:5px;">
+        <i class="bi bi-info-circle"></i> Leave empty to keep current image
+      </div>
+    </div>
+
+    <div class="d-flex gap-3 mt-4">
+      <button type="submit" class="btn-save">
+        <i class="bi bi-check-lg me-2"></i>Update Product
+      </button>
+      <a href="{{ url_for('admin_products') }}" class="btn-cancel">
+        <i class="bi bi-x-lg"></i> Cancel
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+document.getElementById('newImgInput').addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('currentImg');
+      if (img) img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+{% endblock %}

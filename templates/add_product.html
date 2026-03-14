@@ -1,30 +1,380 @@
-<!-- templates/add_product.html -->
-{% extends 'admin_page.html' %} {% block title %}Add Product{% endblock %} {%
-block page_title %}Add Product{% endblock %} {% block content %}
+{% extends 'admin_page.html' %}
+{% block title %}Add Product{% endblock %}
+{% block page_title %}Add Product{% endblock %}
 
-<h4 class="text-light">Add Product</h4>
-<form method="POST" enctype="multipart/form-data" class="text-light">
-  <div class="mb-3">
-    <label>Name</label>
-    <input type="text" name="name" class="form-control" />
+{% block content %}
+<style>
+.form-card {
+  background: rgba(18,22,35,0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 2rem;
+  padding: 2.5rem 2.2rem;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 30px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,215,0,0.1) inset;
+}
+.form-label {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #d0d9ff;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.form-control, .form-control:focus {
+  background: rgba(0,0,0,0.45);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 1.2rem;
+  padding: 0.75rem 1.2rem;
+  color: #f0f3ff;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.form-control:hover { border-color: rgba(255,190,80,0.3); background: rgba(20,25,45,0.7); }
+.form-control:focus { border-color: #f8c150; background: rgba(10,15,30,0.8); box-shadow: 0 0 0 3px rgba(248,193,80,0.15); color: #fff; outline: none; }
+select.form-control option { background: #1a1a2e; color: #f0f3ff; }
+textarea.form-control { resize: vertical; min-height: 90px; border-radius: 1rem; }
+.form-control[type="file"] { padding: 0.4rem 0.75rem; line-height: 2; color: #b7c3f0; }
+.form-control[type="file"]::file-selector-button {
+  background: #2c3147; border: 1px solid rgba(255,200,100,0.4); border-radius: 1.5rem;
+  color: #f5d792; padding: 0.45rem 1.4rem; margin-right: 1rem; font-weight: 500; transition: 0.15s;
+}
+.form-control[type="file"]::file-selector-button:hover { background: #3f4665; border-color: #f8c150; color: #fff3d1; }
+
+.field-error { font-size: 12px; color: #f87171; margin-top: 5px; display: none; }
+.form-control.is-invalid { border-color: #f87171 !important; }
+
+.preview-container {
+  margin-top: 1.2rem; border-radius: 1.8rem;
+  background: rgba(0,0,0,0.35); border: 1.5px dashed rgba(255,215,100,0.3);
+  padding: 1.5rem 1rem; display: flex; align-items: center; justify-content: center;
+  min-height: 180px; transition: border 0.2s, background 0.2s; cursor: pointer;
+}
+.preview-container.drag-over { border-color: #f8c150; background: rgba(248,193,80,0.05); }
+.image-placeholder { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; color: #a1abcf; text-align: center; pointer-events: none; }
+.image-placeholder i { font-size: 3.2rem; color: #f5b342; opacity: 0.7; }
+.preview-img { max-width: 100%; max-height: 220px; border-radius: 1.4rem; border: 2px solid rgba(255,215,0,0.3); object-fit: contain; }
+.remove-preview {
+  background: rgba(220,80,80,0.2); border: 1px solid rgba(255,120,120,0.3);
+  border-radius: 3rem; color: #ffb0b0; font-size: 0.9rem; padding: 0.3rem 1.2rem;
+  margin-top: 0.6rem; cursor: pointer; transition: 0.15s; display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.remove-preview:hover { background: rgba(220,80,80,0.4); border-color: #ffa07a; color: white; }
+.glow-text { font-size: 0.85rem; color: #9aa9d1; margin-top: 0.4rem; opacity: 0.7; }
+
+.discount-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.3);
+  color: #4ade80; font-size: 12px; padding: 3px 10px; border-radius: 99px;
+  margin-top: 6px; display: none;
+}
+
+.status-toggle { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.toggle-wrap { position: relative; width: 46px; height: 24px; }
+.toggle-wrap input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0; background: #2a2f45; border-radius: 99px; cursor: pointer; transition: 0.2s;
+}
+.toggle-slider:before {
+  content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+  background: #6b7280; border-radius: 50%; transition: 0.2s;
+}
+.toggle-wrap input:checked + .toggle-slider { background: rgba(79,70,229,0.3); }
+.toggle-wrap input:checked + .toggle-slider:before { transform: translateX(22px); background: #818cf8; }
+.toggle-label { font-size: 13px; color: #a1abcf; }
+.toggle-label span { color: #818cf8; font-weight: 600; }
+
+.btn-save {
+  background: linear-gradient(145deg, #1f3b2c, #154d2e);
+  border: 1px solid rgba(100,255,150,0.25); border-radius: 3rem;
+  padding: 0.8rem 2rem; font-weight: 600; color: #e3ffd3;
+  transition: 0.2s ease; flex: 1; cursor: pointer;
+}
+.btn-save:hover { background: linear-gradient(145deg, #256f3a, #1e8a41); color: white; transform: scale(1.02); }
+.btn-clear {
+  background: rgba(45,52,75,0.9); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 3rem; padding: 0.8rem 2rem; font-weight: 500;
+  color: #cbd5ff; transition: 0.2s; flex: 1; cursor: pointer;
+}
+.btn-clear:hover { background: rgba(65,75,110,0.95); border-color: rgba(255,215,140,0.4); color: #fff; }
+
+/* Toast */
+.toast-msg {
+  position: fixed; top: 80px; right: 24px; z-index: 9999;
+  background: #0d2b1a; border: 1px solid #14532d; color: #4ade80;
+  padding: 12px 20px; border-radius: 12px; font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
+  transform: translateX(120%); transition: transform 0.3s ease;
+}
+.toast-msg.show { transform: translateX(0); }
+.toast-msg.error { background: #2b0a0a; border-color: #7f1d1d; color: #f87171; }
+</style>
+
+<div class="toast-msg" id="toast"><i class="bi bi-check-circle"></i> <span id="toastText">Product saved!</span></div>
+
+<div class="form-card">
+  <div class="d-flex align-items-center gap-2 mb-4 pb-1"
+       style="border-bottom: 1px dashed rgba(255,215,0,0.25)">
+    <i class="bi bi-stars" style="color:#f8c150;font-size:1.7rem"></i>
+    <span style="font-size:1.8rem;font-weight:600;background:linear-gradient(130deg,#f3e7b0,#fdd998);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+      product vault
+    </span>
   </div>
-  <div class="mb-3">
-    <label>Price</label>
-    <input type="number" name="price" class="form-control" />
-  </div>
-  <div class="mb-3">
-    <label>Old Price</label>
-    <input type="number" name="old_price" class="form-control" />
-  </div>
-  <div class="mb-3">
-    <label>Stock</label>
-    <input type="number" name="stock" class="form-control" />
-  </div>
-  <div class="mb-3">
-    <label>Image</label>
-    <input type="file" name="image" class="form-control" />
-  </div>
-  <button type="submit" class="btn btn-success">Save Product</button>
-  <button type="reset" class="btn btn-secondary">Clear Form</button>
-</form>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+
+        <div style="background: {% if category=='success' %}#0d2b1a{% else %}#2b0a0a{% endif %};
+                    border:1px solid {% if category=='success' %}#14532d{% else %}#7f1d1d{% endif %};
+                    color:{% if category=='success' %}#4ade80{% else %}#f87171{% endif %};
+                    padding:10px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;
+                    display:flex;align-items:center;gap:8px;">
+          <i class="bi bi-{% if category=='success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" enctype="multipart/form-data" id="productForm" novalidate>
+
+    <!-- Name -->
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-tag"></i> Name</label>
+      <input type="text" name="name" id="name" class="form-control" placeholder="e.g. 'Wireless Headphones'"/>
+      <div class="field-error" id="err-name">Product name is required.</div>
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-grid"></i> Category</label>
+<select name="category" id="category" class="form-control">
+  <option value="">— Select category —</option>
+
+  <optgroup label="Electronics & Gadgets">
+    <option value="Smartphones">Smartphones</option>
+    <option value="Laptops">Laptops</option>
+    <option value="Tablets">Tablets</option>
+    <option value="Headphones">Headphones & Audio</option>
+    <option value="Cameras">Cameras</option>
+    <option value="Smart Watches">Smart Watches</option>
+    <option value="Gaming">Gaming</option>
+    <option value="Accessories">Accessories</option>
+  </optgroup>
+
+  <optgroup label="Other">
+    <option value="Other">Other</option>
+  </optgroup>
+</select>
+      <div class="field-error" id="err-category">Please select a category.</div>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-card-text"></i> Description</label>
+      <textarea name="description" id="description" class="form-control"
+                placeholder="Describe the product..."></textarea>
+    </div>
+
+    <!-- Price row -->
+    <div class="row g-3 mb-1">
+      <div class="col-md-6">
+        <label class="form-label"><i class="bi bi-currency-dollar"></i> Price</label>
+        <input type="number" name="price" id="price" class="form-control" placeholder="0.00" step="0.01" min="0"/>
+        <div class="field-error" id="err-price">Price is required.</div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><i class="bi bi-tag" style="opacity:0.7"></i> Old Price</label>
+        <input type="number" name="old_price" id="old_price" class="form-control" placeholder="was" step="0.01" min="0"/>
+      </div>
+    </div>
+    <div class="mb-3">
+      <span class="discount-badge" id="discountBadge">
+        <i class="bi bi-scissors"></i> <span id="discountText"></span> off
+      </span>
+    </div>
+
+    <!-- Stock -->
+    <div class="mb-3">
+      <label class="form-label"><i class="bi bi-boxes"></i> Stock</label>
+      <input type="number" name="stock" id="stock" class="form-control" placeholder="available units" min="0"/>
+      <div class="field-error" id="err-stock">Stock quantity is required.</div>
+    </div>
+
+    <!-- Image -->
+    <div class="mb-4">
+      <label class="form-label"><i class="bi bi-camera"></i> Image</label>
+      <input type="file" name="image" id="fileInput" class="form-control" accept="image/*"/>
+      <div class="preview-container" id="previewContainer">
+        <div class="image-placeholder" id="placeholderContent">
+          <i class="bi bi-cloud-upload"></i>
+          <span>Drag & drop or click to browse</span>
+          <span class="small" style="opacity:0.6">PNG, JPG up to 10MB</span>
+        </div>
+        <div id="previewContent" style="display:none;flex-direction:column;align-items:center;width:100%;">
+          <img src="#" alt="product preview" class="preview-img" id="preview"/>
+          <div class="remove-preview" id="removePreviewBtn">
+            <i class="bi bi-x-circle"></i> Remove
+          </div>
+        </div>
+      </div>
+      <div class="field-error" id="err-image">Please upload a product image.</div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-3 mt-4 pt-2">
+      <button type="submit" class="btn-save">
+        <i class="bi bi-save me-2"></i>Save Product
+      </button>
+      <button type="reset" class="btn-clear" id="resetButton">
+        <i class="bi bi-arrow-counterclockwise me-2"></i>Clear Form
+      </button>
+    </div>
+
+    <div class="text-center mt-4 small" style="color:#8b96c0">
+      <i class="bi bi-shield-check me-1"></i> encrypted · secure · elegant
+    </div>
+  </form>
+</div>
+
+<script>
+/* ── Image preview + drag & drop ── */
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const placeholder = document.getElementById('placeholderContent');
+const previewContent = document.getElementById('previewContent');
+const removeBtn = document.getElementById('removePreviewBtn');
+const previewContainer = document.getElementById('previewContainer');
+
+function showPreview(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    preview.src = e.target.result;
+    placeholder.style.display = 'none';
+    previewContent.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+fileInput.addEventListener('change', function() { showPreview(this.files[0]); });
+
+previewContainer.addEventListener('dragover', e => { e.preventDefault(); previewContainer.classList.add('drag-over'); });
+previewContainer.addEventListener('dragleave', () => previewContainer.classList.remove('drag-over'));
+previewContainer.addEventListener('drop', e => {
+  e.preventDefault();
+  previewContainer.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    fileInput.files = dt.files;
+    showPreview(file);
+  }
+});
+
+previewContainer.addEventListener('click', e => {
+  if (previewContent.style.display === 'none' || !previewContent.style.display) {
+    fileInput.click();
+  }
+});
+
+removeBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  preview.src = '#';
+  fileInput.value = '';
+  previewContent.style.display = 'none';
+  placeholder.style.display = 'flex';
+});
+
+/* ── Discount calculator ── */
+const priceInput = document.getElementById('price');
+const oldPriceInput = document.getElementById('old_price');
+const discountBadge = document.getElementById('discountBadge');
+const discountText = document.getElementById('discountText');
+
+function calcDiscount() {
+  const price = parseFloat(priceInput.value);
+  const oldPrice = parseFloat(oldPriceInput.value);
+  if (price > 0 && oldPrice > price) {
+    const pct = Math.round(((oldPrice - price) / oldPrice) * 100);
+    discountText.textContent = pct + '%';
+    discountBadge.style.display = 'inline-flex';
+  } else {
+    discountBadge.style.display = 'none';
+  }
+}
+priceInput.addEventListener('input', calcDiscount);
+oldPriceInput.addEventListener('input', calcDiscount);
+
+/* ── Status toggle label ── */
+const statusToggle = document.getElementById('statusToggle');
+const toggleLabel = document.getElementById('toggleLabel');
+statusToggle.addEventListener('change', function() {
+  toggleLabel.innerHTML = this.checked
+    ? 'Product is <span>Active</span>'
+    : 'Product is <span style="color:#f87171">Inactive</span>';
+});
+
+/* ── Form validation ── */
+function showError(id, inputId) {
+  document.getElementById(id).style.display = 'block';
+  document.getElementById(inputId).classList.add('is-invalid');
+}
+function clearError(id, inputId) {
+  document.getElementById(id).style.display = 'none';
+  document.getElementById(inputId).classList.remove('is-invalid');
+}
+
+document.getElementById('productForm').addEventListener('submit', function(e) {
+  let valid = true;
+
+  if (!document.getElementById('name').value.trim()) {
+    showError('err-name', 'name'); valid = false;
+  } else { clearError('err-name', 'name'); }
+
+  if (!document.getElementById('category').value) {
+    showError('err-category', 'category'); valid = false;
+  } else { clearError('err-category', 'category'); }
+
+  if (!document.getElementById('price').value || parseFloat(document.getElementById('price').value) <= 0) {
+    showError('err-price', 'price'); valid = false;
+  } else { clearError('err-price', 'price'); }
+
+  if (!document.getElementById('stock').value || parseInt(document.getElementById('stock').value) < 0) {
+    showError('err-stock', 'stock'); valid = false;
+  } else { clearError('err-stock', 'stock'); }
+
+  if (!fileInput.files[0]) {
+    showError('err-image', 'fileInput'); valid = false;
+  } else { clearError('err-image', 'fileInput'); }
+
+  if (!valid) e.preventDefault();
+});
+
+/* ── Clear form resets preview too ── */
+document.getElementById('resetButton').addEventListener('click', function() {
+  preview.src = '#';
+  previewContent.style.display = 'none';
+  placeholder.style.display = 'flex';
+  discountBadge.style.display = 'none';
+  document.querySelectorAll('.field-error').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+});
+
+/* ── Toast on page load if redirected after success ── */
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('saved') === '1') {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
 {% endblock %}

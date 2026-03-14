@@ -1,8 +1,142 @@
 {% extends "Main.html" %}
-
-
 {% block content %}
 
-<h1>welcome to about us page </h1>
+<!-- HERO -->
+<section style="background:var(--bg);padding:5rem 0;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.3;"></div>
+  <div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(0,212,255,0.1) 0%,transparent 70%);top:-100px;right:-100px;pointer-events:none;"></div>
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <div class="section-tag"><i class="bi bi-lightning-fill me-1"></i> About NEXUS</div>
+        <h1 style="font-family:'Syne',sans-serif;font-size:clamp(2rem,5vw,4rem);font-weight:800;color:var(--text);line-height:1;">
+          We're Building<br/><span style="color:var(--cyan);">The Future</span><br/>Of Tech Retail
+        </h1>
+        <div style="width:40px;height:2px;background:var(--cyan);margin:1.2rem 0;"></div>
+        <p style="font-size:0.88rem;color:var(--muted);line-height:1.9;max-width:480px;">
+          Founded in 2020, NEXUS has grown into Southeast Asia's most trusted destination for premium electronics. We curate, test, and deliver only the best technology to innovators like you.
+        </p>
+        <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+          <a href="{{ url_for('products_page') }}" class="btn-primary-n">Our Products →</a>
+          <a href="{{ url_for('contact') }}" class="btn-outline-n">Contact Us</a>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div style="background:var(--card);border:1px solid var(--border);padding:2rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--cyan);">5k+</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem;">Products Listed</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:var(--card);border:1px solid var(--border);padding:2rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--cyan);">240+</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem;">Partner Brands</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:var(--card);border:1px solid var(--border);padding:2rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--cyan);">50k+</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem;">Happy Customers</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:var(--card);border:1px solid var(--border);padding:2rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--cyan);">99%</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.3rem;">Satisfaction Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section style="padding:5rem 0;background:var(--bg2);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag" style="text-align:center;">What We Stand For</div>
+      <h2 class="section-title" style="text-align:center;">Our Core Values</h2>
+      <div class="line-cyan mx-auto"></div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--cyan);padding:1.5rem;transition:all 0.3s;">
+          <div style="font-size:1.5rem;color:var(--cyan);margin-bottom:0.75rem;"><i class="bi bi-shield-check"></i></div>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Authenticity</div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.7;">Every product is 100% genuine. We work directly with official distributors and brand partners.</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--orange);padding:1.5rem;transition:all 0.3s;">
+          <div style="font-size:1.5rem;color:var(--orange);margin-bottom:0.75rem;"><i class="bi bi-lightning-charge"></i></div>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Speed</div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.7;">Same-day dispatch on orders before 2PM. Fast delivery across all major cities.</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid var(--green);padding:1.5rem;transition:all 0.3s;">
+          <div style="font-size:1.5rem;color:var(--green);margin-bottom:0.75rem;"><i class="bi bi-headset"></i></div>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Support</div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.7;">24/7 customer support via chat, email, and phone. We're always here for you.</div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);border-left:3px solid #818cf8;padding:1.5rem;transition:all 0.3s;">
+          <div style="font-size:1.5rem;color:#818cf8;margin-bottom:0.75rem;"><i class="bi bi-arrow-repeat"></i></div>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;">Warranty</div>
+          <div style="font-size:0.8rem;color:var(--muted);line-height:1.7;">All products come with minimum 1-year warranty backed by our own service centers.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section style="padding:5rem 0;background:var(--bg);">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-tag" style="text-align:center;">The People</div>
+      <h2 class="section-title" style="text-align:center;">Meet Our Team</h2>
+      <div class="line-cyan mx-auto"></div>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-6 col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <img src="https://i.pravatar.cc/80?img=11" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--cyan);object-fit:cover;margin:0 auto 1rem;display:block;"/>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);">Alex Chen</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-top:0.3rem;">CEO & Founder</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;line-height:1.6;">10 years in tech retail. Built NEXUS from a single shop to a regional leader.</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <img src="https://i.pravatar.cc/80?img=22" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--cyan);object-fit:cover;margin:0 auto 1rem;display:block;"/>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);">Sarah Kim</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-top:0.3rem;">Head of Products</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;line-height:1.6;">Curates every product on the platform. Gadget enthusiast and UX advocate.</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <img src="https://i.pravatar.cc/80?img=33" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--cyan);object-fit:cover;margin:0 auto 1rem;display:block;"/>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);">Marcus T.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-top:0.3rem;">Tech Lead</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;line-height:1.6;">Keeps the platform fast, secure and reliable for 50,000+ daily users.</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(0,212,255,0.3)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+          <img src="https://i.pravatar.cc/80?img=44" style="width:70px;height:70px;border-radius:50%;border:2px solid var(--cyan);object-fit:cover;margin:0 auto 1rem;display:block;"/>
+          <div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);">Aisha R.</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan);margin-top:0.3rem;">Customer Success</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:0.5rem;line-height:1.6;">Manages our support team and ensures every customer leaves happy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 {% endblock %}
