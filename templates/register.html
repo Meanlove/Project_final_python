@@ -12,7 +12,11 @@
     />
 
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
       body {
         height: 100vh;
@@ -34,114 +38,112 @@
         z-index: 0;
       }
 
-      
-/* Glass login/register box */
-.login-box {
-  width: 360px;
-  background: rgba(0, 0, 40, 0.85);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(111, 168, 220, 0.8);
-  color: white;
-  position: relative;
-  z-index: 1;
-  backdrop-filter: blur(10px);
-}
+      /* Glass login/register box */
+      .login-box {
+        width: 360px;
+        background: rgba(0, 0, 40, 0.85);
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 0 40px rgba(111, 168, 220, 0.8);
+        color: white;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+      }
 
-/* Header */
-.login-box h3 {
-  font-weight: 600;
-  margin-bottom: 25px;
-  text-align: center;
-  color: #6fa8dc;
-  text-shadow: 0 0 10px rgba(111,168,220,0.7);
-}
+      /* Header */
+      .login-box h3 {
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #6fa8dc;
+        text-shadow: 0 0 10px rgba(111, 168, 220, 0.7);
+      }
 
-/* Input fields */
-.login-box input,
-.login-box select {
-  width: 100%;
-  padding: 12px 15px;
-  margin-top: 5px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.05);
-  color: white;
-  font-size: 15px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 10px rgba(111,168,220,0.4);
-  appearance: none;
-}
+      /* Input fields */
+      .login-box input,
+      .login-box select {
+        width: 100%;
+        padding: 12px 15px;
+        margin-top: 5px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 0 10px rgba(111, 168, 220, 0.4);
+        appearance: none;
+      }
 
-.login-box input::placeholder {
-  color: rgba(255,255,255,0.6);
-}
+      .login-box input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
 
-.login-box input:focus,
-.login-box select:focus {
-  outline: none;
-  border-color: #6fa8dc;
-  box-shadow: 0 0 20px rgba(111,168,220,0.8);
-}
+      .login-box input:focus,
+      .login-box select:focus {
+        outline: none;
+        border-color: #6fa8dc;
+        box-shadow: 0 0 20px rgba(111, 168, 220, 0.8);
+      }
 
-/* Role dropdown custom style */
-.role-select {
-  position: relative;
-}
+      /* Role dropdown custom style */
+      .role-select {
+        position: relative;
+      }
 
-.role-select::after {
-  content: '▼';
-  position: absolute;
-  top: 50%;
-  right: 15px;
-  transform: translateY(-50%);
-  color: #6fa8dc;
-  pointer-events: none;
-  font-size: 12px;
-}
+      .role-select::after {
+        content: "▼";
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        color: #6fa8dc;
+        pointer-events: none;
+        font-size: 12px;
+      }
 
-/* Hover effect */
-.login-box input:hover,
-.login-box select:hover {
-  border-color: #3a6ea5;
-  box-shadow: 0 0 15px rgba(58, 110, 165, 0.7);
-}
+      /* Hover effect */
+      .login-box input:hover,
+      .login-box select:hover {
+        border-color: #3a6ea5;
+        box-shadow: 0 0 15px rgba(58, 110, 165, 0.7);
+      }
 
-/* Button */
-.login-box .btn-primary {
-  margin-top: 15px;
-  background: linear-gradient(90deg, #6fa8dc, #3a6ea5);
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(111,168,220,0.7);
-}
+      /* Button */
+      .login-box .btn-primary {
+        margin-top: 15px;
+        background: linear-gradient(90deg, #6fa8dc, #3a6ea5);
+        border: none;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(111, 168, 220, 0.7);
+      }
 
-.login-box .btn-primary:hover {
-  background: linear-gradient(90deg, #3a6ea5, #6fa8dc);
-  box-shadow: 0 0 25px rgba(111,168,220,1);
-}
+      .login-box .btn-primary:hover {
+        background: linear-gradient(90deg, #3a6ea5, #6fa8dc);
+        box-shadow: 0 0 25px rgba(111, 168, 220, 1);
+      }
 
-/* Footer link */
-.login-box .text-center a {
-  color: #6fa8dc;
-  text-decoration: none;
-  font-weight: 500;
-}
+      /* Footer link */
+      .login-box .text-center a {
+        color: #6fa8dc;
+        text-decoration: none;
+        font-weight: 500;
+      }
 
-.login-box .text-center a:hover {
-  text-shadow: 0 0 8px rgba(111,168,220,0.8);
-}
+      .login-box .text-center a:hover {
+        text-shadow: 0 0 8px rgba(111, 168, 220, 0.8);
+      }
 
-.role-select select {
-  color: white;                  /* text color */
-  background: #0a0a1f;           /* dark background */
-}
-
+      .role-select select {
+        color: white; /* text color */
+        background: #0a0a1f; /* dark background */
+      }
     </style>
   </head>
   <body>
@@ -149,32 +151,56 @@
 
     <div class="login-box">
       <h3 class="text-center mb-4">Register</h3>
-      <form method="POST" action="/">
-
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input type="text" name="username" placeholder="Enter username" required />
+      {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for msg_category, msg_text in messages %}
+    <div style="background:{% if msg_category=='success' %}rgba(0,255,136,0.1){% else %}rgba(255,107,43,0.1){% endif %};
+                border:1px solid {% if msg_category=='success' %}var(--green){% else %}var(--orange){% endif %};
+                color:{% if msg_category=='success' %}var(--green){% else %}var(--orange){% endif %};
+                padding:10px 14px;font-size:12px;margin-bottom:1.2rem;
+                display:flex;align-items:center;gap:8px;
+                font-family:'IBM Plex Mono',monospace;">
+      <i class="bi bi-{% if msg_category=='success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+      {{ msg_text }}
     </div>
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" placeholder="Enter email" required />
-    </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+      <form method="POST" action="{{ url_for('register') }}">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input
+            type="text"
+            name="username"
+            placeholder="Enter username"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" placeholder="Enter email" required />
+        </div>
 
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" placeholder="Enter password" required />
-    </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            required
+          />
+        </div>
 
-    <div class="mb-3 role-select">
-      <label class="form-label">Role</label>
-      <select name="role" required>
-        <option value="Customer">Customer</option>
-        <option value="Admin">Admin</option>
-      </select>
-    </div>
+        <div class="mb-3 role-select">
+          <label class="form-label">Role</label>
+          <select name="role" required>
+            <option value="Customer">Customer</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
 
-    <button class="btn btn-primary w-100">Register</button>
-  </form>
+        <button class="btn btn-primary w-100">Register</button>
+      </form>
 
       <div class="text-center mt-3">
         <p class="mb-0">
@@ -185,8 +211,8 @@
     </div>
 
     <script>
-      const canvas = document.getElementById('galaxy');
-      const ctx = canvas.getContext('2d');
+      const canvas = document.getElementById("galaxy");
+      const ctx = canvas.getContext("2d");
       let stars = [];
       let particles = [];
       const numStars = 150;
@@ -197,7 +223,7 @@
         canvas.height = window.innerHeight;
       }
 
-      window.addEventListener('resize', resize);
+      window.addEventListener("resize", resize);
       resize();
 
       // Create stars
@@ -207,7 +233,7 @@
           y: Math.random() * canvas.height,
           size: Math.random() * 2 + 1,
           speed: Math.random() * 0.3 + 0.1,
-          alpha: Math.random()
+          alpha: Math.random(),
         });
       }
 
@@ -218,7 +244,7 @@
           y: Math.random() * canvas.height,
           size: Math.random() * 4 + 2,
           speed: Math.random() * 0.5 + 0.2,
-          color: `hsl(${Math.random() * 360}, 70%, 70%)`
+          color: `hsl(${Math.random() * 360}, 70%, 70%)`,
         });
       }
 
@@ -226,7 +252,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw stars
-        stars.forEach(s => {
+        stars.forEach((s) => {
           ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -239,7 +265,7 @@
         });
 
         // Draw particles
-        particles.forEach(p => {
+        particles.forEach((p) => {
           ctx.fillStyle = p.color;
           ctx.shadowBlur = 10;
           ctx.shadowColor = p.color;

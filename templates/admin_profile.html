@@ -61,7 +61,7 @@
     <img src="{{ url_for('static', filename='uploads/' + admin.profile_img) }}"
          id="avatarPreview"/>
   {% else %}
-    <img src="https://i.pravatar.cc/80?u={{ admin.id }}"
+    <img src="{{ admin.id }}"
          id="avatarPreview"/>
   {% endif %}
   <label for="profile_img_input" class="avatar-edit-btn" title="Change photo">

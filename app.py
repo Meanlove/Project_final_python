@@ -11,6 +11,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "123456"
 
 
+# ✅ Fix
 def connect_db():
     try:
         conn = pymysql.connect(
@@ -21,8 +22,9 @@ def connect_db():
             cursorclass=pymysql.cursors.DictCursor
         )
         return conn
-    except:
-        print("Database connection failed")
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        return None
 
 
 def get_products():
@@ -39,27 +41,34 @@ def get_products():
 def register():
     if request.method == "POST":
         username = request.form["username"]
-        email = request.form["email"]
+        email    = request.form["email"]
         password = request.form["password"]
-        role = request.form["role"]
+        role     = request.form["role"]
 
         conn = connect_db()
-        cursor = conn.cursor()
+        if not conn:
+            flash("Database connection failed. Try again.", "error")
+            return redirect(url_for("register"))
+
+        cursor = conn.cursor(pymysql.cursors.DictCursor) 
         cursor.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cursor.fetchone()
 
         if user:
             cursor.close()
             conn.close()
-            return "Email already registered!"
+            flash("Email already registered! Please use a different email.", "error")
+            return redirect(url_for("register"))
 
         cursor.execute(
-            "INSERT INTO users (username,email,password,role) VALUES (%s,%s,%s,%s)",
+            "INSERT INTO users (username, email, password, role) VALUES (%s, %s, %s, %s)",
             (username, email, password, role)
         )
         conn.commit()
         cursor.close()
         conn.close()
+
+        flash("Account created successfully! Please login.", "success")
         return redirect(url_for("login"))
 
     return render_template("register.html")

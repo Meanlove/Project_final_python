@@ -232,7 +232,7 @@
           src="{{ url_for('static', filename='uploads/' + admin.profile_img) }}"
         />
         {% else %}
-        <img src="https://i.pravatar.cc/80?u={{ admin.id }}" />
+        <img src="{{ admin.id }}" />
         {% endif %}
         <h6>Hello {{ admin.username }}</h6>
         <small>Administrator</small>
